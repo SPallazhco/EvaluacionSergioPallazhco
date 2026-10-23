@@ -4,7 +4,7 @@ Sistema de Gestión de Transferencias Interbancarias: administración de cuentas
 ejecución de transferencias con validaciones de negocio, detección automática de operaciones
 sospechosas y consulta del historial de movimientos.
 
-> 🚧 Proyecto en construcción. Las instrucciones completas de configuración, compilación y
+> Proyecto en construcción. Las instrucciones completas de configuración, compilación y
 > ejecución se documentarán al finalizar el desarrollo.
 
 ## Stack
