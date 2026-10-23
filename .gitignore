@@ -1,0 +1,37 @@
+# ===== Java / Maven / Quarkus =====
+target/
+!.mvn/wrapper/maven-wrapper.jar
+*.class
+*.log
+hs_err_pid*
+.quarkus/
+
+# ===== Angular / Node =====
+node_modules/
+dist/
+.angular/
+coverage/
+npm-debug.log*
+yarn-error.log*
+
+# ===== Entorno y secretos =====
+.env
+.env.*
+!.env.example
+
+# ===== IDEs =====
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+.classpath
+.project
+.settings/
+.factorypath
+
+# ===== Sistema operativo =====
+.DS_Store
+Thumbs.db
+
+# ===== Calidad (SonarQube) =====
+.scannerwork/
