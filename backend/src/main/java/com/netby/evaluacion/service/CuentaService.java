@@ -6,6 +6,7 @@ import com.netby.evaluacion.dto.response.PaginaResponse;
 import com.netby.evaluacion.entity.Cuenta;
 import com.netby.evaluacion.exception.CodigoError;
 import com.netby.evaluacion.exception.RecursoDuplicadoException;
+import com.netby.evaluacion.exception.RecursoNoEncontradoException;
 import com.netby.evaluacion.mapper.CuentaMapper;
 import com.netby.evaluacion.repository.CuentaRepository;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
@@ -40,6 +41,13 @@ public class CuentaService {
 
         Log.infof("Cuenta registrada con id %d", cuenta.getId());
         return cuentaMapper.toResponse(cuenta);
+    }
+
+    public CuentaResponse obtenerPorId(Long id) {
+        return cuentaRepository.findByIdOptional(id)
+                .map(cuentaMapper::toResponse)
+                .orElseThrow(() -> new RecursoNoEncontradoException(CodigoError.CUENTA_NO_ENCONTRADA,
+                        "No existe una cuenta con id " + id));
     }
 
     public PaginaResponse<CuentaResponse> listar(int pagina, int tamanio) {

@@ -8,6 +8,7 @@ import com.netby.evaluacion.entity.EstadoCuenta;
 import com.netby.evaluacion.entity.TipoCuenta;
 import com.netby.evaluacion.exception.CodigoError;
 import com.netby.evaluacion.exception.RecursoDuplicadoException;
+import com.netby.evaluacion.exception.RecursoNoEncontradoException;
 import com.netby.evaluacion.mapper.CuentaMapperImpl;
 import com.netby.evaluacion.repository.CuentaRepository;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
@@ -22,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -80,6 +82,26 @@ class CuentaServiceTest {
                 .hasMessageContaining("1234567890")
                 .extracting("codigo").isEqualTo(CodigoError.CUENTA_DUPLICADA);
         verify(cuentaRepository, never()).persist(any(Cuenta.class));
+    }
+
+    @Test
+    void obtenerPorIdDebeRetornarLaCuentaCuandoExiste() {
+        Cuenta cuenta = new Cuenta("1234567890", "Ana Pérez", TipoCuenta.AHORRO,
+                new BigDecimal("10.00"), EstadoCuenta.ACTIVA);
+        when(cuentaRepository.findByIdOptional(7L)).thenReturn(Optional.of(cuenta));
+
+        CuentaResponse respuesta = cuentaService.obtenerPorId(7L);
+
+        assertThat(respuesta.numeroCuenta()).isEqualTo("1234567890");
+    }
+
+    @Test
+    void obtenerPorIdDebeFallarCuandoLaCuentaNoExiste() {
+        when(cuentaRepository.findByIdOptional(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> cuentaService.obtenerPorId(99L))
+                .isInstanceOf(RecursoNoEncontradoException.class)
+                .extracting("codigo").isEqualTo(CodigoError.CUENTA_NO_ENCONTRADA);
     }
 
     @Test
