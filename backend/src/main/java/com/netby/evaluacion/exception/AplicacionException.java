@@ -7,7 +7,7 @@ package com.netby.evaluacion.exception;
  * Es {@code sealed} para que el compilador obligue a mapear cualquier categoría nueva.
  */
 public abstract sealed class AplicacionException extends RuntimeException
-        permits RecursoDuplicadoException, RecursoNoEncontradoException {
+        permits RecursoDuplicadoException, RecursoNoEncontradoException, ReglaNegocioException {
 
     private final CodigoError codigo;
 
