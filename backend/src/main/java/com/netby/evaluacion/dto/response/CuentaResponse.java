@@ -4,7 +4,7 @@ import com.netby.evaluacion.entity.EstadoCuenta;
 import com.netby.evaluacion.entity.TipoCuenta;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public record CuentaResponse(
         Long id,
@@ -13,6 +13,6 @@ public record CuentaResponse(
         TipoCuenta tipo,
         BigDecimal saldo,
         EstadoCuenta estado,
-        LocalDateTime fechaCreacion
+        Instant fechaCreacion
 ) {
 }

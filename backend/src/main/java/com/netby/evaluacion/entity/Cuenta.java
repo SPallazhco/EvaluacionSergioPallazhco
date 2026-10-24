@@ -11,7 +11,7 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Objects;
 
 @Entity
@@ -41,7 +41,7 @@ public class Cuenta {
 
     @CreationTimestamp
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
-    private LocalDateTime fechaCreacion;
+    private Instant fechaCreacion;
 
     /**
      * Requerido por JPA.
@@ -113,7 +113,7 @@ public class Cuenta {
         return estado;
     }
 
-    public LocalDateTime getFechaCreacion() {
+    public Instant getFechaCreacion() {
         return fechaCreacion;
     }
 

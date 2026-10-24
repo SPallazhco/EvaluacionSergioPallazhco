@@ -3,7 +3,7 @@ package com.netby.evaluacion.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.netby.evaluacion.exception.CodigoError;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -17,7 +17,7 @@ public record ProblemaResponse(
         int status,
         String detail,
         CodigoError codigo,
-        OffsetDateTime timestamp,
+        Instant timestamp,
         List<ErrorCampo> errores
 ) {
 
@@ -30,12 +30,12 @@ public record ProblemaResponse(
     }
 
     public static ProblemaResponse de(int status, String titulo, String detalle, CodigoError codigo) {
-        return new ProblemaResponse(TIPO_GENERICO, titulo, status, detalle, codigo, OffsetDateTime.now(), null);
+        return new ProblemaResponse(TIPO_GENERICO, titulo, status, detalle, codigo, Instant.now(), null);
     }
 
     public static ProblemaResponse conErrores(int status, String titulo, String detalle, CodigoError codigo,
                                               List<ErrorCampo> errores) {
-        return new ProblemaResponse(TIPO_GENERICO, titulo, status, detalle, codigo, OffsetDateTime.now(), errores);
+        return new ProblemaResponse(TIPO_GENERICO, titulo, status, detalle, codigo, Instant.now(), errores);
     }
 
     public record ErrorCampo(String campo, String mensaje) {
