@@ -1,4 +1,4 @@
 <div class="dashboard">
-  <app-cuentas />
-  <app-transferencia-form />
+  <app-cuentas [actualizacion]="actualizacionCuentas()" />
+  <app-transferencia-form (transferenciaRealizada)="refrescarCuentas()" />
 </div>

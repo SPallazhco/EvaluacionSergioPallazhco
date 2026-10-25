@@ -138,6 +138,19 @@ describe('CuentasComponent', () => {
     );
   });
 
+  it('vuelve a consultar las cuentas cuando cambia la actualización', async () => {
+    await responderCuentas(CUENTAS);
+    const actualizadas = CUENTAS.map((cuenta) =>
+      cuenta.id === 1 ? { ...cuenta, saldo: 1000 } : cuenta,
+    );
+
+    fixture.componentRef.setInput('actualizacion', 1);
+    TestBed.tick();
+    await responderCuentas(actualizadas);
+
+    expect(filas()[0]).toContain('$1.000,00');
+  });
+
   it('muestra el error del backend y permite reintentar', async () => {
     controlador
       .expectOne((solicitud) => solicitud.url === URL_CUENTAS)

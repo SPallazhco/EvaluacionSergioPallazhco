@@ -12,10 +12,9 @@
   }
 
   @if (cuentas.error()) {
-    <div class="cuentas__error" role="alert">
-      <span>{{ mensajeError() }}</span>
+    <app-mensaje class="cuentas__error" tipo="error" [texto]="mensajeError()">
       <button mat-button type="button" (click)="recargar()">Reintentar</button>
-    </div>
+    </app-mensaje>
   } @else {
     <div class="cuentas__tabla">
       <table

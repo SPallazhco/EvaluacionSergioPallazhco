@@ -40,12 +40,25 @@
       <mat-error>{{ mensajeErrorMonto() }}</mat-error>
     </mat-form-field>
 
-    <button mat-flat-button type="submit">Transferir</button>
+    <button mat-flat-button type="submit" [disabled]="enviando()">
+      {{ enviando() ? 'Enviando…' : 'Transferir' }}
+    </button>
   </form>
 
+  @if (resultado(); as resultado) {
+    <app-mensaje
+      class="transferencia__resultado"
+      [tipo]="resultado.tipo"
+      [texto]="resultado.texto"
+      [detalles]="resultado.detalles"
+    />
+  }
+
   @if (cuentas.error()) {
-    <p class="transferencia__aviso" role="alert">
-      No se pudieron cargar las cuentas para seleccionar.
-    </p>
+    <app-mensaje
+      class="transferencia__resultado"
+      tipo="error"
+      texto="No se pudieron cargar las cuentas para seleccionar."
+    />
   }
 </section>

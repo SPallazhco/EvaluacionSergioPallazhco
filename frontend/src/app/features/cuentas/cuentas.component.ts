@@ -1,5 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,6 +8,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSortModule, Sort, SortDirection } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { ErrorApi } from '../../core/models/error-api.model';
+import { MensajeComponent } from '../../shared/components/mensaje/mensaje.component';
 import { CeldaTipadaDirective } from '../../shared/directives/celda-tipada.directive';
 import { PaginadorIntl } from '../../shared/paginador-intl';
 import { ETIQUETAS_ESTADO_CUENTA, ETIQUETAS_TIPO_CUENTA } from './cuenta.model';
@@ -27,6 +28,7 @@ const MENSAJE_ERROR_CARGA = 'No se pudieron cargar las cuentas.';
     MatProgressBarModule,
     MatSortModule,
     MatTableModule,
+    MensajeComponent,
   ],
   providers: [{ provide: MatPaginatorIntl, useClass: PaginadorIntl }],
   templateUrl: './cuentas.component.html',
@@ -41,7 +43,10 @@ export class CuentasComponent {
   protected readonly etiquetasTipo = ETIQUETAS_TIPO_CUENTA;
   protected readonly etiquetasEstado = ETIQUETAS_ESTADO_CUENTA;
 
+  readonly actualizacion = input(0);
+
   protected readonly cuentas = rxResource({
+    params: () => this.actualizacion(),
     stream: () => this.cuentaService.listarTodas(),
   });
 

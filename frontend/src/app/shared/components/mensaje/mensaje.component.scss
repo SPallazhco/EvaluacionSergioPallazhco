@@ -1,0 +1,40 @@
+:host {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--mat-sys-corner-small);
+}
+
+:host(.mensaje--exito) {
+  background-color: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+
+:host(.mensaje--advertencia) {
+  background-color: #fff4e5;
+  color: #663c00;
+}
+
+:host(.mensaje--error) {
+  background-color: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+}
+
+.mensaje__icono {
+  flex-shrink: 0;
+}
+
+.mensaje__contenido {
+  flex: 1;
+  min-width: 0;
+}
+
+.mensaje__texto {
+  margin: 0;
+}
+
+.mensaje__detalles {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+}

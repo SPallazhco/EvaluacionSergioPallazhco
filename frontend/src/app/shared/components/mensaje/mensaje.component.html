@@ -1,0 +1,12 @@
+<mat-icon class="mensaje__icono" aria-hidden="true">{{ icono() }}</mat-icon>
+<div class="mensaje__contenido">
+  <p class="mensaje__texto">{{ texto() }}</p>
+  @if (detalles().length > 0) {
+    <ul class="mensaje__detalles">
+      @for (detalle of detalles(); track $index) {
+        <li>{{ detalle }}</li>
+      }
+    </ul>
+  }
+</div>
+<ng-content />
