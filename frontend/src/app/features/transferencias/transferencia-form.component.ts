@@ -4,6 +4,7 @@ import {
   computed,
   DestroyRef,
   inject,
+  input,
   LOCALE_ID,
   output,
   signal,
@@ -65,6 +66,7 @@ export class TransferenciaFormComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly locale = inject(LOCALE_ID);
 
+  readonly actualizacion = input(0);
   readonly transferenciaRealizada = output<TransferenciaResponse>();
 
   private readonly directivaFormulario = viewChild.required(FormGroupDirective);
@@ -84,6 +86,7 @@ export class TransferenciaFormComponent {
   protected readonly resultado = signal<ResultadoTransferencia | null>(null);
 
   protected readonly cuentas = rxResource({
+    params: () => this.actualizacion(),
     stream: () => this.cuentaService.listarTodas(),
   });
 
@@ -166,7 +169,6 @@ export class TransferenciaFormComponent {
   private alCompletar(transferencia: TransferenciaResponse): void {
     this.resultado.set(resultadoExitoso(transferencia, this.locale));
     this.directivaFormulario().resetForm();
-    this.cuentas.reload();
     this.transferenciaRealizada.emit(transferencia);
   }
 }

@@ -118,11 +118,6 @@ describe('TransferenciaFormComponent', () => {
       .flush({ contenido: CUENTAS, pagina: 0, tamanio: 100, totalElementos: 3, totalPaginas: 1 });
   }
 
-  function responderRecargaCuentas(): void {
-    TestBed.tick();
-    responderCuentas();
-  }
-
   function selector(control: string): Promise<MatSelectHarness> {
     return cargador.getHarness(
       MatSelectHarness.with({ selector: `[formControlName="${control}"]` }),
@@ -214,6 +209,17 @@ describe('TransferenciaFormComponent', () => {
     });
   });
 
+  it('vuelve a cargar las cuentas cuando cambia la actualización', async () => {
+    fixture.componentRef.setInput('actualizacion', 1);
+    TestBed.tick();
+    responderCuentas();
+    await fixture.whenStable();
+
+    const origen = await selector('cuentaOrigen');
+    await origen.open();
+    expect(await origen.getOptions()).toHaveLength(3);
+  });
+
   describe('envío al backend', () => {
     it('envía la transferencia con el monto convertido a número', async () => {
       await llenar(/1111111111/, /2222222222/, '250,50');
@@ -226,7 +232,6 @@ describe('TransferenciaFormComponent', () => {
         monto: 250.5,
       });
       solicitud.flush(TRANSFERENCIA, { status: 201, statusText: 'Created' });
-      responderRecargaCuentas();
     });
 
     it('deshabilita el botón mientras espera la respuesta', async () => {
@@ -242,13 +247,12 @@ describe('TransferenciaFormComponent', () => {
       controlador
         .expectOne(`${URL_API}/transferencias`)
         .flush(TRANSFERENCIA, { status: 201, statusText: 'Created' });
-      responderRecargaCuentas();
       await fixture.whenStable();
 
       expect(await boton.isDisabled()).toBe(false);
     });
 
-    it('muestra el éxito, limpia el formulario, recarga las cuentas y avisa al padre', async () => {
+    it('muestra el éxito, limpia el formulario y avisa al padre', async () => {
       const emitidas: TransferenciaResponse[] = [];
       fixture.componentInstance.transferenciaRealizada.subscribe((transferencia) => {
         emitidas.push(transferencia);
@@ -259,7 +263,6 @@ describe('TransferenciaFormComponent', () => {
       controlador
         .expectOne(`${URL_API}/transferencias`)
         .flush(TRANSFERENCIA, { status: 201, statusText: 'Created' });
-      responderRecargaCuentas();
       await fixture.whenStable();
 
       expect(mensaje()?.getAttribute('role')).toBe('status');
@@ -286,7 +289,6 @@ describe('TransferenciaFormComponent', () => {
         },
         { status: 201, statusText: 'Created' },
       );
-      responderRecargaCuentas();
       await fixture.whenStable();
 
       expect(mensaje()?.classList).toContain('mensaje--advertencia');

@@ -1,4 +1,10 @@
 <div class="dashboard">
-  <app-cuentas [actualizacion]="actualizacionCuentas()" />
-  <app-transferencia-form (transferenciaRealizada)="refrescarCuentas()" />
+  <app-cuentas
+    [actualizacion]="actualizacionCuentas()"
+    (actualizacionSolicitada)="refrescarCuentas()"
+  />
+  <app-transferencia-form
+    [actualizacion]="actualizacionCuentas()"
+    (transferenciaRealizada)="refrescarCuentas()"
+  />
 </div>

@@ -1,5 +1,13 @@
 import { CurrencyPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -44,6 +52,7 @@ export class CuentasComponent {
   protected readonly etiquetasEstado = ETIQUETAS_ESTADO_CUENTA;
 
   readonly actualizacion = input(0);
+  readonly actualizacionSolicitada = output();
 
   protected readonly cuentas = rxResource({
     params: () => this.actualizacion(),
@@ -76,6 +85,10 @@ export class CuentasComponent {
   protected cambiarPagina(evento: PageEvent): void {
     this.indicePagina.set(evento.pageIndex);
     this.tamanioPagina.set(evento.pageSize);
+  }
+
+  protected solicitarActualizacion(): void {
+    this.actualizacionSolicitada.emit();
   }
 
   protected recargar(): void {

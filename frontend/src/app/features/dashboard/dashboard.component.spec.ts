@@ -1,6 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { API_URL } from '../../core/config/api.config';
 import { provideLocalizacion } from '../../core/config/localizacion';
@@ -11,7 +11,11 @@ const URL_CUENTAS = 'https://api.prueba/api/cuentas?pagina=0&tamanio=100';
 const PAGINA_VACIA = { contenido: [], pagina: 0, tamanio: 100, totalElementos: 0, totalPaginas: 0 };
 
 describe('DashboardComponent', () => {
-  it('actualiza la tabla de cuentas cuando se realiza una transferencia', async () => {
+  let fixture: ComponentFixture<DashboardComponent>;
+  let controlador: HttpTestingController;
+  let consultasIniciales: number;
+
+  beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [DashboardComponent],
       providers: [
@@ -21,14 +25,38 @@ describe('DashboardComponent', () => {
         { provide: API_URL, useValue: 'https://api.prueba/api' },
       ],
     });
-    const controlador = TestBed.inject(HttpTestingController);
-    const fixture = TestBed.createComponent(DashboardComponent);
+    controlador = TestBed.inject(HttpTestingController);
+    fixture = TestBed.createComponent(DashboardComponent);
     TestBed.tick();
-    controlador.match(URL_CUENTAS).forEach((solicitud) => {
-      solicitud.flush(PAGINA_VACIA);
-    });
+    consultasIniciales = responderConsultasDeCuentas();
     await fixture.whenStable();
+  });
 
+  afterEach(() => {
+    controlador.verify();
+  });
+
+  function responderConsultasDeCuentas(): number {
+    const consultas = controlador.match(URL_CUENTAS);
+    consultas.forEach((consulta) => {
+      consulta.flush(PAGINA_VACIA);
+    });
+    return consultas.length;
+  }
+
+  it('carga las cuentas para la tabla y para el formulario', () => {
+    expect(consultasIniciales).toBe(2);
+  });
+
+  it('recarga la tabla y el formulario al pulsar Actualizar', () => {
+    const boton = fixture.debugElement.query(By.css('.cuentas__encabezado button'));
+    (boton.nativeElement as HTMLButtonElement).click();
+    TestBed.tick();
+
+    expect(responderConsultasDeCuentas()).toBe(2);
+  });
+
+  it('recarga la tabla y el formulario cuando se realiza una transferencia', () => {
     const formulario = fixture.debugElement.query(By.directive(TransferenciaFormComponent))
       .componentInstance as TransferenciaFormComponent;
     formulario.transferenciaRealizada.emit({
@@ -42,11 +70,6 @@ describe('DashboardComponent', () => {
     });
     TestBed.tick();
 
-    const recargas = controlador.match(URL_CUENTAS);
-    expect(recargas).toHaveLength(1);
-    recargas.forEach((solicitud) => {
-      solicitud.flush(PAGINA_VACIA);
-    });
-    controlador.verify();
+    expect(responderConsultasDeCuentas()).toBe(2);
   });
 });

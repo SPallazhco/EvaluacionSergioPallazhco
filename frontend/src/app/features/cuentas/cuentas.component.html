@@ -1,7 +1,12 @@
 <section class="cuentas" aria-labelledby="titulo-cuentas">
   <header class="cuentas__encabezado">
     <h2 id="titulo-cuentas" class="cuentas__titulo">Cuentas bancarias</h2>
-    <button mat-stroked-button type="button" [disabled]="cuentas.isLoading()" (click)="recargar()">
+    <button
+      mat-stroked-button
+      type="button"
+      [disabled]="cuentas.isLoading()"
+      (click)="solicitarActualizacion()"
+    >
       <mat-icon aria-hidden="true">refresh</mat-icon>
       Actualizar
     </button>

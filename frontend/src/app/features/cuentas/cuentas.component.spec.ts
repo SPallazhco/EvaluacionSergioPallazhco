@@ -151,6 +151,19 @@ describe('CuentasComponent', () => {
     expect(filas()[0]).toContain('$1.000,00');
   });
 
+  it('pide la actualización al contenedor al pulsar Actualizar', async () => {
+    await responderCuentas(CUENTAS);
+    let solicitudes = 0;
+    fixture.componentInstance.actualizacionSolicitada.subscribe(() => {
+      solicitudes++;
+    });
+
+    elemento.querySelector<HTMLButtonElement>('.cuentas__encabezado button')?.click();
+    TestBed.tick();
+
+    expect(solicitudes).toBe(1);
+  });
+
   it('muestra el error del backend y permite reintentar', async () => {
     controlador
       .expectOne((solicitud) => solicitud.url === URL_CUENTAS)
