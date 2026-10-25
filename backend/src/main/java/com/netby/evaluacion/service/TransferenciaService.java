@@ -71,7 +71,9 @@ public class TransferenciaService {
         } catch (ReglaNegocioException e) {
             Transferencia rechazada = Transferencia.rechazada(origen, destino, monto, ahora, e.getMessage());
             transferenciaRepository.persist(rechazada);
-            Log.infof("Transferencia id=%d rechazada: %s", rechazada.getId(), e.getCodigo());
+            Log.infof("Transferencia rechazada id=%d codigo=%s origen=%s destino=%s monto=%s",
+                    rechazada.getId(), e.getCodigo(), Enmascarador.numeroCuenta(origen.getNumeroCuenta()),
+                    Enmascarador.numeroCuenta(destino.getNumeroCuenta()), monto.toPlainString());
             throw e;
         }
 
@@ -85,7 +87,9 @@ public class TransferenciaService {
                 : Transferencia.completada(origen, destino, monto, ahora);
         transferenciaRepository.persist(transferencia);
 
-        Log.infof("Transferencia id=%d ejecutada con estado %s", transferencia.getId(), transferencia.getEstado());
+        Log.infof("Transferencia ejecutada id=%d estado=%s origen=%s destino=%s monto=%s",
+                transferencia.getId(), transferencia.getEstado(), Enmascarador.numeroCuenta(origen.getNumeroCuenta()),
+                Enmascarador.numeroCuenta(destino.getNumeroCuenta()), monto.toPlainString());
         return transferenciaMapper.toResponse(transferencia);
     }
 

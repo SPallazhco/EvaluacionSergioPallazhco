@@ -39,7 +39,8 @@ public class CuentaService {
         Cuenta cuenta = cuentaMapper.toEntity(request);
         cuentaRepository.persist(cuenta);
 
-        Log.infof("Cuenta registrada con id %d", cuenta.getId());
+        Log.infof("Cuenta registrada id=%d numero=%s tipo=%s", cuenta.getId(),
+                Enmascarador.numeroCuenta(cuenta.getNumeroCuenta()), cuenta.getTipo());
         return cuentaMapper.toResponse(cuenta);
     }
 

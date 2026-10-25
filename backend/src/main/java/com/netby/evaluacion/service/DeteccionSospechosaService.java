@@ -44,8 +44,8 @@ public class DeteccionSospechosaService {
 
         ResultadoDeteccion resultado = new ResultadoDeteccion(motivos);
         if (resultado.esSospechosa()) {
-            Log.infof("Transferencia marcada para revisión. Cuenta origen id=%d, motivos=[%s]",
-                    cuentaOrigenId, resultado.descripcion());
+            Log.warnf("Operación sospechosa detectada cuentaOrigenId=%d monto=%s motivos=[%s]",
+                    cuentaOrigenId, monto.toPlainString(), resultado.descripcion());
         }
         return resultado;
     }
