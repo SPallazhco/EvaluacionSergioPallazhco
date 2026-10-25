@@ -1,4 +1,3 @@
-import { CurrencyPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,6 +24,7 @@ import { finalize } from 'rxjs';
 import { MensajeComponent } from '../../shared/components/mensaje/mensaje.component';
 import { ETIQUETAS_ESTADO_CUENTA } from '../cuentas/cuenta.model';
 import { CuentaService } from '../cuentas/cuenta.service';
+import { ResumenCuentaComponent } from '../cuentas/resumen-cuenta.component';
 import {
   ResultadoTransferencia,
   resultadoExitoso,
@@ -46,13 +46,13 @@ import {
 @Component({
   selector: 'app-transferencia-form',
   imports: [
-    CurrencyPipe,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MensajeComponent,
     ReactiveFormsModule,
+    ResumenCuentaComponent,
   ],
   templateUrl: './transferencia-form.component.html',
   styleUrl: './transferencia-form.component.scss',
@@ -107,9 +107,14 @@ export class TransferenciaFormComponent {
     }),
   );
 
-  protected readonly cuentaOrigen = computed(() =>
+  private readonly cuentaOrigen = computed(() =>
     this.listaCuentas().find((cuenta) => cuenta.numeroCuenta === this.numeroOrigen()),
   );
+
+  protected readonly resumenOrigen = rxResource({
+    params: () => this.cuentaOrigen()?.id,
+    stream: ({ params: id }) => this.cuentaService.obtenerResumen(id),
+  });
 
   protected mensajeErrorMonto(): string {
     return mensajeErrorMonto(this.formulario.controls.monto.errors);

@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { API_URL } from '../../core/config/api.config';
 import { PaginaResponse } from '../../shared/models/pagina.model';
-import { CuentaResponse } from './cuenta.model';
+import { CuentaResponse, ResumenCuentaResponse } from './cuenta.model';
 import { CuentaService, TAMANIO_MAXIMO_PAGINA } from './cuenta.service';
 
 const URL_CUENTAS = 'https://api.prueba/api/cuentas';
@@ -131,5 +131,28 @@ describe('CuentaService', () => {
 
     expect(error).toBeDefined();
     expect(cuentas).toBeUndefined();
+  });
+
+  it('obtenerResumen consulta GET /cuentas/{id}/resumen', () => {
+    const resumen: ResumenCuentaResponse = {
+      cuentaId: 5,
+      numeroCuenta: '3000000003',
+      saldoActual: 17757.11,
+      totalTransferidoHoy: 6000,
+      montoDisponibleHoy: 4000,
+      cantidadTransferenciasHoy: 1,
+      cantidadSospechosasHoy: 1,
+      cantidadSospechosasTotal: 1,
+    };
+    let respuesta: ResumenCuentaResponse | undefined;
+    servicio.obtenerResumen(5).subscribe((resultado) => {
+      respuesta = resultado;
+    });
+
+    const solicitud = controlador.expectOne(`${URL_CUENTAS}/5/resumen`);
+    expect(solicitud.request.method).toBe('GET');
+    solicitud.flush(resumen);
+
+    expect(respuesta).toEqual(resumen);
   });
 });

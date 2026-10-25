@@ -1,0 +1,22 @@
+<dl class="resumen" [attr.aria-label]="'Actividad de hoy de la cuenta ' + resumen().numeroCuenta">
+  <div class="resumen__dato">
+    <dt>Saldo actual</dt>
+    <dd>{{ resumen().saldoActual | currency }}</dd>
+  </div>
+  <div class="resumen__dato">
+    <dt>Disponible hoy</dt>
+    <dd>{{ resumen().montoDisponibleHoy | currency }}</dd>
+  </div>
+  <div class="resumen__dato">
+    <dt>Transferido hoy</dt>
+    <dd>{{ resumen().totalTransferidoHoy | currency }}</dd>
+  </div>
+  <div class="resumen__dato">
+    <dt>Transferencias hoy</dt>
+    <dd>{{ resumen().cantidadTransferenciasHoy }}</dd>
+  </div>
+  <div class="resumen__dato">
+    <dt>En revisión hoy</dt>
+    <dd>{{ resumen().cantidadSospechosasHoy }}</dd>
+  </div>
+</dl>

@@ -12,6 +12,17 @@ export interface CuentaResponse {
   readonly fechaCreacion: string;
 }
 
+export interface ResumenCuentaResponse {
+  readonly cuentaId: number;
+  readonly numeroCuenta: string;
+  readonly saldoActual: number;
+  readonly totalTransferidoHoy: number;
+  readonly montoDisponibleHoy: number;
+  readonly cantidadTransferenciasHoy: number;
+  readonly cantidadSospechosasHoy: number;
+  readonly cantidadSospechosasTotal: number;
+}
+
 export const ETIQUETAS_TIPO_CUENTA: Readonly<Record<TipoCuenta, string>> = {
   AHORRO: 'Ahorro',
   CORRIENTE: 'Corriente',

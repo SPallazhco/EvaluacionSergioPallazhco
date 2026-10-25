@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { forkJoin, map, Observable, of, switchMap } from 'rxjs';
 import { API_URL } from '../../core/config/api.config';
 import { PaginaResponse } from '../../shared/models/pagina.model';
-import { CuentaResponse } from './cuenta.model';
+import { CuentaResponse, ResumenCuentaResponse } from './cuenta.model';
 
 export const TAMANIO_MAXIMO_PAGINA = 100;
 
@@ -32,5 +32,9 @@ export class CuentaService {
         );
       }),
     );
+  }
+
+  obtenerResumen(id: number): Observable<ResumenCuentaResponse> {
+    return this.http.get<ResumenCuentaResponse>(`${this.url}/${String(id)}/resumen`);
   }
 }

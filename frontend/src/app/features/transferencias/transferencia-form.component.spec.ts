@@ -1,4 +1,9 @@
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import {
+  HttpInterceptorFn,
+  HttpResponse,
+  provideHttpClient,
+  withInterceptors,
+} from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
@@ -6,10 +11,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { MatSelectHarness } from '@angular/material/select/testing';
+import { of } from 'rxjs';
 import { API_URL } from '../../core/config/api.config';
 import { provideLocalizacion } from '../../core/config/localizacion';
 import { erroresHttpInterceptor } from '../../core/http/errores-http.interceptor';
-import { CuentaResponse } from '../cuentas/cuenta.model';
+import { CuentaResponse, ResumenCuentaResponse } from '../cuentas/cuenta.model';
 import { TransferenciaFormComponent } from './transferencia-form.component';
 import { TransferenciaResponse } from './transferencia.model';
 
@@ -45,6 +51,17 @@ const CUENTAS: readonly CuentaResponse[] = [
   },
 ];
 
+const RESUMEN: ResumenCuentaResponse = {
+  cuentaId: 1,
+  numeroCuenta: '1111111111',
+  saldoActual: 1500,
+  totalTransferidoHoy: 250,
+  montoDisponibleHoy: 9750,
+  cantidadTransferenciasHoy: 1,
+  cantidadSospechosasHoy: 0,
+  cantidadSospechosasTotal: 0,
+};
+
 const TRANSFERENCIA: TransferenciaResponse = {
   id: 10,
   numeroCuentaOrigen: '1111111111',
@@ -55,6 +72,16 @@ const TRANSFERENCIA: TransferenciaResponse = {
   motivo: null,
 };
 
+const resumenesSolicitados: string[] = [];
+
+const resumenInmediato: HttpInterceptorFn = (solicitud, siguiente) => {
+  if (!solicitud.url.endsWith('/resumen')) {
+    return siguiente(solicitud);
+  }
+  resumenesSolicitados.push(solicitud.url);
+  return of(new HttpResponse({ status: 200, body: RESUMEN }));
+};
+
 describe('TransferenciaFormComponent', () => {
   let fixture: ComponentFixture<TransferenciaFormComponent>;
   let elemento: HTMLElement;
@@ -62,10 +89,11 @@ describe('TransferenciaFormComponent', () => {
   let controlador: HttpTestingController;
 
   beforeEach(async () => {
+    resumenesSolicitados.length = 0;
     TestBed.configureTestingModule({
       imports: [TransferenciaFormComponent],
       providers: [
-        provideHttpClient(withInterceptors([erroresHttpInterceptor])),
+        provideHttpClient(withInterceptors([resumenInmediato, erroresHttpInterceptor])),
         provideHttpClientTesting(),
         provideLocalizacion(),
         { provide: API_URL, useValue: URL_API },
@@ -159,12 +187,18 @@ describe('TransferenciaFormComponent', () => {
       expect(errores()).toEqual(['La cuenta destino debe ser diferente a la cuenta origen']);
     });
 
-    it('muestra el saldo disponible de la cuenta origen', async () => {
+    it('consulta y muestra el resumen del día de la cuenta origen', async () => {
       await (await selector('cuentaOrigen')).clickOptions({ text: /1111111111/ });
 
-      expect(elemento.querySelector('mat-hint')?.textContent).toContain(
-        'Saldo disponible: $1.500,00',
-      );
+      expect(resumenesSolicitados).toEqual([`${URL_API}/cuentas/1/resumen`]);
+      const resumen = elemento.querySelector('app-resumen-cuenta');
+      expect(resumen?.textContent).toContain('$1.500,00');
+      expect(resumen?.textContent).toContain('Disponible hoy');
+      expect(resumen?.textContent).toContain('$9.750,00');
+    });
+
+    it('no muestra el resumen mientras no haya cuenta origen', () => {
+      expect(elemento.querySelector('app-resumen-cuenta')).toBeNull();
     });
 
     it('deshabilita las cuentas inactivas en los selectores', async () => {
@@ -236,6 +270,7 @@ describe('TransferenciaFormComponent', () => {
       expect(await (await selector('cuentaOrigen')).getValueText()).toBe('');
       expect(await (await cargador.getHarness(MatInputHarness)).getValue()).toBe('');
       expect(errores()).toEqual([]);
+      expect(elemento.querySelector('app-resumen-cuenta')).toBeNull();
     });
 
     it('advierte cuando la transferencia queda en revisión', async () => {

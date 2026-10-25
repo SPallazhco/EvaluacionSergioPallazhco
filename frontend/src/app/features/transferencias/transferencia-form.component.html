@@ -11,11 +11,12 @@
           </mat-option>
         }
       </mat-select>
-      @if (cuentaOrigen(); as origen) {
-        <mat-hint>Saldo disponible: {{ origen.saldo | currency }}</mat-hint>
-      }
       <mat-error>Seleccione la cuenta origen</mat-error>
     </mat-form-field>
+
+    @if (resumenOrigen.hasValue()) {
+      <app-resumen-cuenta [resumen]="resumenOrigen.value()" />
+    }
 
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>Cuenta destino</mat-label>
