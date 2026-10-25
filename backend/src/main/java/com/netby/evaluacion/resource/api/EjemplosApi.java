@@ -50,7 +50,8 @@ final class EjemplosApi {
               "numeroCuentaDestino": "0987654321",
               "monto": 250.00,
               "fecha": "2026-10-24T15:30:00Z",
-              "estado": "COMPLETADA"
+              "estado": "COMPLETADA",
+              "motivo": null
             }""";
 
     static final String TRANSFERENCIA_EN_REVISION = """

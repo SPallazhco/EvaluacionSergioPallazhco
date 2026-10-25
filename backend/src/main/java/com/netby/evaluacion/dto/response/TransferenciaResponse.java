@@ -20,7 +20,7 @@ public record TransferenciaResponse(
         Instant fecha,
         @Schema(description = "COMPLETADA: ejecutada. EN_REVISION: ejecutada y marcada como sospechosa. RECHAZADA: no ejecutada", example = "COMPLETADA")
         EstadoTransferencia estado,
-        @Schema(description = "Causa del rechazo o de la marca de revisión; ausente si está COMPLETADA")
+        @Schema(description = "Causa del rechazo o de la marca de revisión; null si está COMPLETADA")
         String motivo
 ) {
 }
