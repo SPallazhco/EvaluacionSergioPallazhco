@@ -80,4 +80,16 @@ class CuentaTest {
         assertThat(cuenta.tieneSaldoSuficiente(new BigDecimal("50"))).isTrue();
         assertThat(cuenta.tieneSaldoSuficiente(new BigDecimal("50.01"))).isFalse();
     }
+
+    @Test
+    void cuentasSinPersistirSoloSonIgualesASiMismas() {
+        Cuenta cuenta = cuentaConSaldo("10.00", EstadoCuenta.ACTIVA);
+        Cuenta otra = cuentaConSaldo("10.00", EstadoCuenta.ACTIVA);
+
+        assertThat(cuenta).isEqualTo(cuenta)
+                .isNotEqualTo(otra)
+                .isNotEqualTo(null)
+                .isNotEqualTo("1234567890")
+                .hasSameHashCodeAs(otra);
+    }
 }

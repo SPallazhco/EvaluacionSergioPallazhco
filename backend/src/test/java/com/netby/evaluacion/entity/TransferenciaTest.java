@@ -49,4 +49,16 @@ class TransferenciaTest {
         assertThat(transferencia.esSospechosa()).isFalse();
         assertThat(transferencia.getMotivo()).isEqualTo("Saldo insuficiente");
     }
+
+    @Test
+    void transferenciasSinPersistirSoloSonIgualesASiMismas() {
+        Transferencia transferencia = Transferencia.completada(origen, destino, MONTO, FECHA);
+        Transferencia otra = Transferencia.completada(origen, destino, MONTO, FECHA);
+
+        assertThat(transferencia).isEqualTo(transferencia)
+                .isNotEqualTo(otra)
+                .isNotEqualTo(null)
+                .isNotEqualTo(MONTO)
+                .hasSameHashCodeAs(otra);
+    }
 }

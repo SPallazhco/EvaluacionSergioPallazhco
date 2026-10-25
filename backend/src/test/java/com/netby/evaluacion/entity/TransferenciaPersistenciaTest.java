@@ -81,4 +81,21 @@ class TransferenciaPersistenciaTest {
             entityManager.flush();
         }).isInstanceOf(PersistenceException.class);
     }
+
+    @Test
+    @TestTransaction
+    void entidadesConElMismoIdDebenSerIguales() {
+        Cuenta origen = nuevaCuenta();
+        Cuenta destino = nuevaCuenta();
+        Transferencia transferencia = Transferencia.completada(origen, destino, BigDecimal.ONE, Instant.now());
+        entityManager.persist(transferencia);
+        entityManager.flush();
+        entityManager.clear();
+
+        Cuenta cuentaLeida = entityManager.find(Cuenta.class, origen.getId());
+        Transferencia transferenciaLeida = entityManager.find(Transferencia.class, transferencia.getId());
+
+        assertThat(cuentaLeida).isNotSameAs(origen).isEqualTo(origen).isNotEqualTo(destino);
+        assertThat(transferenciaLeida).isNotSameAs(transferencia).isEqualTo(transferencia);
+    }
 }
