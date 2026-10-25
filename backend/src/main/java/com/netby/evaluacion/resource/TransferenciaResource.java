@@ -1,11 +1,14 @@
 package com.netby.evaluacion.resource;
 
 import com.netby.evaluacion.dto.request.CrearTransferenciaRequest;
+import com.netby.evaluacion.dto.request.FiltroTransferenciasRequest;
+import com.netby.evaluacion.dto.response.PaginaResponse;
 import com.netby.evaluacion.dto.response.TransferenciaResponse;
 import com.netby.evaluacion.service.TransferenciaService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -38,6 +41,11 @@ public class TransferenciaResource {
         TransferenciaResponse transferencia = transferenciaService.ejecutar(request);
         URI ubicacion = uriInfo.getAbsolutePathBuilder().path(String.valueOf(transferencia.id())).build();
         return Response.created(ubicacion).entity(transferencia).build();
+    }
+
+    @GET
+    public PaginaResponse<TransferenciaResponse> consultarHistorial(@Valid @BeanParam FiltroTransferenciasRequest filtro) {
+        return transferenciaService.consultarHistorial(filtro);
     }
 
     @GET

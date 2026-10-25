@@ -1,6 +1,8 @@
 package com.netby.evaluacion.service;
 
 import com.netby.evaluacion.dto.request.CrearTransferenciaRequest;
+import com.netby.evaluacion.dto.request.FiltroTransferenciasRequest;
+import com.netby.evaluacion.dto.response.PaginaResponse;
 import com.netby.evaluacion.dto.response.TransferenciaResponse;
 import com.netby.evaluacion.entity.Cuenta;
 import com.netby.evaluacion.entity.Transferencia;
@@ -8,9 +10,12 @@ import com.netby.evaluacion.exception.CodigoError;
 import com.netby.evaluacion.exception.RecursoNoEncontradoException;
 import com.netby.evaluacion.exception.ReglaNegocioException;
 import com.netby.evaluacion.mapper.TransferenciaMapper;
+import com.netby.evaluacion.repository.CriteriosHistorial;
 import com.netby.evaluacion.repository.CuentaRepository;
 import com.netby.evaluacion.repository.TransferenciaRepository;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.logging.Log;
+import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -82,6 +87,25 @@ public class TransferenciaService {
 
         Log.infof("Transferencia id=%d ejecutada con estado %s", transferencia.getId(), transferencia.getEstado());
         return transferenciaMapper.toResponse(transferencia);
+    }
+
+    public PaginaResponse<TransferenciaResponse> consultarHistorial(FiltroTransferenciasRequest filtro) {
+        CriteriosHistorial criterios = new CriteriosHistorial(
+                filtro.cuentaOrigen(),
+                filtro.cuentaDestino(),
+                filtro.fechaDesde() == null ? null : calendario.inicioDelDia(filtro.fechaDesde()),
+                filtro.fechaHasta() == null ? null : calendario.finDelDia(filtro.fechaHasta()),
+                filtro.estado());
+
+        PanacheQuery<Transferencia> consulta = transferenciaRepository.buscarHistorial(criterios)
+                .page(Page.of(filtro.pagina(), filtro.tamanio()));
+
+        return new PaginaResponse<>(
+                consulta.list().stream().map(transferenciaMapper::toResponse).toList(),
+                filtro.pagina(),
+                filtro.tamanio(),
+                consulta.count(),
+                consulta.pageCount());
     }
 
     public TransferenciaResponse obtenerPorId(Long id) {

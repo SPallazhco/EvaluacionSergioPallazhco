@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneOffset;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,6 +38,14 @@ class CalendarioNegocioTest {
 
         assertThat(rango.desde()).isEqualTo(Instant.parse("2026-10-23T05:00:00Z"));
         assertThat(rango.hasta()).isEqualTo(Instant.parse("2026-10-24T05:00:00Z"));
+    }
+
+    @Test
+    void inicioYFinDeUnDiaCalendarioDebenConvertirseAInstantesUtc() {
+        LocalDate dia = LocalDate.of(2026, 10, 24);
+
+        assertThat(calendario.inicioDelDia(dia)).isEqualTo(Instant.parse("2026-10-24T05:00:00Z"));
+        assertThat(calendario.finDelDia(dia)).isEqualTo(Instant.parse("2026-10-25T05:00:00Z"));
     }
 
     @Test

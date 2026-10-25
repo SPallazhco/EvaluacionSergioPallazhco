@@ -3,7 +3,9 @@ package com.netby.evaluacion.resource;
 import com.netby.evaluacion.dto.request.CrearCuentaRequest;
 import com.netby.evaluacion.dto.response.CuentaResponse;
 import com.netby.evaluacion.dto.response.PaginaResponse;
+import com.netby.evaluacion.dto.response.ResumenCuentaResponse;
 import com.netby.evaluacion.service.CuentaService;
+import com.netby.evaluacion.service.ResumenCuentaService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -30,10 +32,12 @@ import java.net.URI;
 public class CuentaResource {
 
     private final CuentaService cuentaService;
+    private final ResumenCuentaService resumenCuentaService;
 
     @Inject
-    public CuentaResource(CuentaService cuentaService) {
+    public CuentaResource(CuentaService cuentaService, ResumenCuentaService resumenCuentaService) {
         this.cuentaService = cuentaService;
+        this.resumenCuentaService = resumenCuentaService;
     }
 
     @POST
@@ -59,5 +63,11 @@ public class CuentaResource {
     @Path("/{id}")
     public CuentaResponse obtenerPorId(@PathParam("id") Long id) {
         return cuentaService.obtenerPorId(id);
+    }
+
+    @GET
+    @Path("/{id}/resumen")
+    public ResumenCuentaResponse obtenerResumen(@PathParam("id") Long id) {
+        return resumenCuentaService.obtener(id);
     }
 }

@@ -34,8 +34,14 @@ public class LimiteDiarioService {
     }
 
     public BigDecimal montoDisponible(Long cuentaOrigenId, Instant instante) {
-        BigDecimal disponible = limiteDiario.subtract(totalTransferidoEnElDia(cuentaOrigenId, instante));
-        return disponible.max(BigDecimal.ZERO);
+        return disponibleSegunAcumulado(totalTransferidoEnElDia(cuentaOrigenId, instante));
+    }
+
+    /**
+     * Lo que aún puede transferirse dado lo ya transferido en el día; nunca negativo.
+     */
+    public BigDecimal disponibleSegunAcumulado(BigDecimal totalTransferidoEnElDia) {
+        return limiteDiario.subtract(totalTransferidoEnElDia).max(BigDecimal.ZERO);
     }
 
     /**

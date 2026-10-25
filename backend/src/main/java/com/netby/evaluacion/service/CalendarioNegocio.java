@@ -34,8 +34,20 @@ public class CalendarioNegocio {
      */
     public RangoFechas rangoDelDia(Instant instante) {
         LocalDate dia = instante.atZone(zonaHoraria).toLocalDate();
-        return new RangoFechas(
-                dia.atStartOfDay(zonaHoraria).toInstant(),
-                dia.plusDays(1).atStartOfDay(zonaHoraria).toInstant());
+        return new RangoFechas(inicioDelDia(dia), finDelDia(dia));
+    }
+
+    /**
+     * Primer instante (UTC) del día calendario indicado, en la zona de negocio.
+     */
+    public Instant inicioDelDia(LocalDate dia) {
+        return dia.atStartOfDay(zonaHoraria).toInstant();
+    }
+
+    /**
+     * Límite exclusivo del día: el primer instante del día siguiente.
+     */
+    public Instant finDelDia(LocalDate dia) {
+        return dia.plusDays(1).atStartOfDay(zonaHoraria).toInstant();
     }
 }
