@@ -1,0 +1,51 @@
+<section class="transferencia" aria-labelledby="titulo-transferencia">
+  <h2 id="titulo-transferencia" class="transferencia__titulo">Nueva transferencia</h2>
+
+  <form class="transferencia__formulario" [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Cuenta origen</mat-label>
+      <mat-select formControlName="cuentaOrigen" required>
+        @for (opcion of opcionesCuentas(); track opcion.numero) {
+          <mat-option [value]="opcion.numero" [disabled]="opcion.inactiva">
+            {{ opcion.etiqueta }}
+          </mat-option>
+        }
+      </mat-select>
+      @if (cuentaOrigen(); as origen) {
+        <mat-hint>Saldo disponible: {{ origen.saldo | currency }}</mat-hint>
+      }
+      <mat-error>Seleccione la cuenta origen</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Cuenta destino</mat-label>
+      <mat-select
+        formControlName="cuentaDestino"
+        required
+        [errorStateMatcher]="cuentasIgualesMatcher"
+      >
+        @for (opcion of opcionesCuentas(); track opcion.numero) {
+          <mat-option [value]="opcion.numero" [disabled]="opcion.inactiva">
+            {{ opcion.etiqueta }}
+          </mat-option>
+        }
+      </mat-select>
+      <mat-error>{{ mensajeErrorDestino() }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Monto (USD)</mat-label>
+      <input matInput formControlName="monto" inputmode="decimal" autocomplete="off" required />
+      <mat-hint>Ejemplo: 250,50</mat-hint>
+      <mat-error>{{ mensajeErrorMonto() }}</mat-error>
+    </mat-form-field>
+
+    <button mat-flat-button type="submit">Transferir</button>
+  </form>
+
+  @if (cuentas.error()) {
+    <p class="transferencia__aviso" role="alert">
+      No se pudieron cargar las cuentas para seleccionar.
+    </p>
+  }
+</section>

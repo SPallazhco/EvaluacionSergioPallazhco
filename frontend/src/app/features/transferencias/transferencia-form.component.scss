@@ -1,0 +1,21 @@
+.transferencia {
+  padding: 1rem 1.5rem 1.5rem;
+  background-color: var(--mat-sys-surface);
+  border-radius: var(--mat-sys-corner-large);
+  box-shadow: var(--mat-sys-level1);
+}
+
+.transferencia__titulo {
+  margin: 0 0 1rem;
+  font: var(--mat-sys-title-large);
+}
+
+.transferencia__formulario {
+  display: grid;
+  gap: 1rem;
+}
+
+.transferencia__aviso {
+  margin: 1rem 0 0;
+  color: var(--mat-sys-error);
+}

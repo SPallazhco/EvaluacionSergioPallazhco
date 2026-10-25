@@ -49,6 +49,7 @@ module.exports = defineConfig([
       '@angular-eslint/relative-url-prefix': 'error',
       '@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/unbound-method': ['error', { ignoreStatic: true }],
       eqeqeq: 'error',
       'no-console': ['error', { allow: ['error'] }],
       'no-duplicate-imports': 'error',
