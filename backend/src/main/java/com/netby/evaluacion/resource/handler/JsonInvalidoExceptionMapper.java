@@ -1,4 +1,4 @@
-package com.netby.evaluacion.exception.handler;
+package com.netby.evaluacion.resource.handler;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;

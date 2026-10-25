@@ -1,4 +1,4 @@
-package com.netby.evaluacion.exception.handler;
+package com.netby.evaluacion.resource.handler;
 
 import com.netby.evaluacion.dto.response.ProblemaResponse;
 import com.netby.evaluacion.exception.CodigoError;
