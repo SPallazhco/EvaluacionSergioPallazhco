@@ -2,7 +2,8 @@
 
 Sistema de Gestión de Transferencias Interbancarias: administración de cuentas bancarias,
 ejecución de transferencias con validaciones de negocio, detección automática de operaciones
-sospechosas y consulta del historial de movimientos.
+sospechosas y consulta del historial de movimientos. Incluye una API REST en Quarkus y un
+dashboard en Angular para visualizar cuentas y ejecutar transferencias.
 
 ## Contenido
 
@@ -13,7 +14,8 @@ sospechosas y consulta del historial de movimientos.
 - [Compilación, pruebas y cobertura](#compilación-pruebas-y-cobertura)
 - [Documentación de la API](#documentación-de-la-api)
 - [Reglas de negocio y supuestos](#reglas-de-negocio-y-supuestos)
-- [Arquitectura](#arquitectura)
+- [Arquitectura del backend](#arquitectura-del-backend)
+- [Dashboard en Angular](#dashboard-en-angular)
 - [Manejo de errores](#manejo-de-errores)
 - [Observabilidad](#observabilidad)
 - [Criterios de la evaluación](#criterios-de-la-evaluación)
@@ -24,16 +26,19 @@ sospechosas y consulta del historial de movimientos.
 | Capa | Tecnología |
 |---|---|
 | Backend | Java 21, Quarkus 3.33 LTS (Quarkus REST, Hibernate ORM con Panache, Hibernate Validator) |
+| Frontend | Angular 22 (standalone, zoneless, signals), Angular Material 22, TypeScript 6 |
 | Base de datos | MySQL 8.4, migraciones con Flyway |
 | Mapeo de DTOs | MapStruct |
 | Documentación API | OpenAPI 3 / Swagger UI |
-| Pruebas | JUnit 5, Mockito, RestAssured, AssertJ, ArchUnit, JaCoCo |
-| Contenedores | Docker, Docker Compose |
+| Pruebas | JUnit 5, Mockito, RestAssured, AssertJ, ArchUnit, JaCoCo (backend); Vitest (frontend) |
+| Calidad del frontend | ESLint con typescript-eslint, angular-eslint y SonarJS; Prettier |
+| Contenedores | Docker, Docker Compose, nginx |
 
 ```
 EvaluacionSergioPallazhco/
 ├── backend/              API REST (Quarkus)
-├── docker-compose.yml    MySQL + backend
+├── frontend/             Dashboard (Angular)
+├── docker-compose.yml    MySQL + backend + frontend
 └── .env.example          Variables configurables
 ```
 
@@ -47,6 +52,7 @@ docker compose up -d --build
 
 | Servicio | URL |
 |---|---|
+| Frontend | http://localhost:4200 |
 | API | http://localhost:8080/api |
 | Swagger UI | http://localhost:8080/q/swagger-ui |
 | Health check | http://localhost:8080/q/health |
@@ -59,10 +65,13 @@ docker compose down
 ```
 
 Para borrar también los datos de MySQL usar `docker compose down -v`. Los valores por defecto
-(credenciales, puerto de MySQL, origen permitido por CORS) se pueden cambiar copiando
-`.env.example` como `.env`.
+(credenciales, puerto de MySQL, puerto del frontend, origen permitido por CORS) se pueden cambiar
+copiando `.env.example` como `.env`. Si se cambia `FRONTEND_PORT`, `CORS_ORIGINS` debe apuntar al
+mismo puerto (por ejemplo `http://localhost:4300`).
 
 ## Ejecución en modo desarrollo
+
+### Backend
 
 Requisitos: Java 21 y Docker (Maven no es necesario, el proyecto incluye Maven Wrapper).
 
@@ -82,6 +91,22 @@ cd backend
 ./mvnw package -DskipTests
 DB_URL=jdbc:mysql://localhost:3307/transferencias DB_USERNAME=transferencias DB_PASSWORD=transferencias java -jar target/quarkus-app/quarkus-run.jar
 ```
+
+### Frontend
+
+Requisitos: Node.js 24 LTS (versión fijada en `frontend/.nvmrc`; Angular 22 también admite
+Node 22.22.3 o superior) y el backend en ejecución en http://localhost:8080, ya sea con
+`./mvnw quarkus:dev` o con `docker compose up -d mysql backend`.
+
+```bash
+cd frontend
+nvm use
+npm ci
+npm start
+```
+
+La aplicación queda en http://localhost:4200 y se recarga al guardar cambios. La URL de la API
+se define en `frontend/src/environments/environment*.ts`.
 
 ## Base de datos
 
@@ -108,6 +133,8 @@ Las fechas se almacenan en UTC.
 
 ## Compilación, pruebas y cobertura
 
+### Backend
+
 ```bash
 cd backend
 ./mvnw package          # compila, ejecuta las pruebas y genera target/quarkus-app
@@ -124,6 +151,23 @@ estar en ejecución. El reporte de cobertura queda en `backend/target/jacoco-rep
 | Concurrencia | Transferencias simultáneas sobre la misma cuenta y transferencias cruzadas A→B / B→A |
 | Arquitectura (ArchUnit) | Separación de capas, ausencia de ciclos, inyección por constructor |
 | Documentación | Cada endpoint documenta sus respuestas en OpenAPI |
+
+### Frontend
+
+```bash
+cd frontend
+npm test                # pruebas unitarias con Vitest
+npm run lint            # ESLint (TypeScript y plantillas)
+npm run format:check    # formato con Prettier
+npm run build           # build de producción en dist/transferencias-web
+```
+
+| Tipo de prueba | Qué valida |
+|---|---|
+| Servicios | Solicitudes HTTP, carga de todas las páginas de cuentas, cuerpo exacto de la transferencia |
+| Interceptores | Cabecera `X-Request-Id` y conversión de errores RFC 7807 |
+| Validaciones | Campos requeridos, monto numérico, mayor a cero y con 2 decimales, cuentas distintas |
+| Componentes | Tabla y ordenamiento por saldo, formulario, mensajes del backend y refresco de saldos |
 
 ## Documentación de la API
 
@@ -200,7 +244,7 @@ acumulado diario. Las cuentas se bloquean siempre en el mismo orden (por número
 evitar deadlocks entre transferencias cruzadas. Ambos escenarios tienen pruebas con solicitudes
 simultáneas reales.
 
-## Arquitectura
+## Arquitectura del backend
 
 Arquitectura en capas: los Resources reciben la solicitud HTTP y delegan, los Services contienen
 las reglas de negocio y las transacciones, y los Repositories acceden a datos.
@@ -240,6 +284,66 @@ Principios aplicados:
 - Las reglas de ArchUnit (`ArquitecturaTest`) hacen fallar el build si se rompe la separación de
   capas.
 
+## Dashboard en Angular
+
+Aplicación de una sola página con la tabla de cuentas y el formulario de transferencia.
+
+### Funcionalidades
+
+- **Tabla de cuentas** con número, titular, tipo, saldo y estado. Se puede ordenar por saldo de
+  forma ascendente o descendente y paginar (10, 25 o 50 filas). Muestra estados de carga, vacío y
+  error con opción de reintentar.
+- **Formulario de transferencia** con selección de cuenta origen y destino, monto y botón de
+  envío. Valida en el cliente que todos los campos sean obligatorios, que el monto sea numérico,
+  mayor a cero y con hasta 2 decimales (acepta coma o punto), y que la cuenta destino sea
+  distinta de la origen. Las cuentas inactivas aparecen deshabilitadas.
+- **Resultado de la transferencia**: mensaje de éxito, aviso cuando queda `EN_REVISION` (con el
+  motivo) o el error devuelto por el backend con su código de seguimiento (`X-Request-Id`). Tras
+  una transferencia exitosa se limpia el formulario y se actualizan los saldos de la tabla.
+- **Resumen de la cuenta origen** (`GET /api/cuentas/{id}/resumen`): saldo, monto disponible del
+  límite diario, total transferido y transferencias del día.
+- Montos en dólares con formato `es-EC` (`$1.500,00`).
+
+### Estructura
+
+```
+frontend/src/app
+├── core            Configuración (URL de la API, localización), interceptores HTTP, modelo de errores
+├── shared          Modelos y componentes reutilizables (paginación, mensajes, tipado de celdas)
+└── features
+    ├── cuentas         cuentas.component, cuenta.service, resumen-cuenta.component
+    ├── transferencias  transferencia-form.component, transferencia.service, validadores
+    └── dashboard       Página que compone la tabla y el formulario (carga diferida)
+```
+
+| Archivo esperado | Ubicación |
+|---|---|
+| `cuentas.component.ts`, `cuentas.component.html`, `cuenta.service.ts` | `frontend/src/app/features/cuentas/` |
+| `transferencia-form.component.ts`, `transferencia-form.component.html`, `transferencia.service.ts` | `frontend/src/app/features/transferencias/` |
+
+### Decisiones de diseño
+
+- **Componentes standalone, zoneless y `OnPush`**, con signals para el estado y `rxResource` para
+  las consultas. No hay suscripciones manuales sin liberar.
+- **Inyección con `inject()`**, como recomienda la guía de estilo de Angular; ESLint lo exige.
+- **Modelos tipados** que reflejan los DTOs del backend con los mismos nombres
+  (`CuentaResponse`, `CrearTransferenciaRequest`, `ProblemaResponse`, etc.).
+- **Listado completo de cuentas**: `GET /api/cuentas` es paginado (máximo 100 por página). El
+  servicio pide la primera página y, si hay más, el resto en paralelo; el ordenamiento por saldo
+  y la paginación de la tabla se hacen en el cliente sobre todas las cuentas, de modo que el
+  orden es correcto en todas las páginas.
+- **Manejo centralizado de errores HTTP**: un interceptor convierte cualquier error en `ErrorApi`
+  (código, mensaje, errores por campo, detalles y `X-Request-Id`); otro interceptor envía un
+  `X-Request-Id` por solicitud para correlacionar la pantalla con los logs del backend.
+- **Validaciones del cliente sin duplicar reglas de negocio**: el cliente valida formato y
+  obligatoriedad; saldo, estado de las cuentas y límite diario los decide el backend.
+- **El backend rechaza propiedades desconocidas**, por lo que el servicio de transferencias arma
+  el cuerpo solo con los campos del contrato.
+- **URL de la API por entorno** mediante el token `API_URL`. Tanto en desarrollo como en Docker
+  el navegador llama a `http://localhost:8080/api` usando CORS.
+- **Imagen Docker multi-stage**: se compila con Node 24 y se sirve con nginx sin privilegios, con
+  fallback de SPA, caché inmutable para los archivos con hash, gzip y cabeceras de seguridad.
+
 ## Manejo de errores
 
 Los errores siguen el formato RFC 7807 (`application/problem+json`) e incluyen un código estable:
@@ -273,6 +377,8 @@ Los errores siguen el formato RFC 7807 (`application/problem+json`) e incluyen u
 - Health checks en `/q/health` (incluye la conexión a la base de datos).
 - CORS habilitado solo para el origen del frontend (`http://localhost:4200` por defecto,
   configurable con `CORS_ORIGINS`).
+- El frontend genera el `X-Request-Id` de cada solicitud y lo muestra como código de seguimiento
+  cuando una transferencia falla, para ubicar la solicitud en los logs.
 
 ## Criterios de la evaluación
 
@@ -283,12 +389,14 @@ Los errores siguen el formato RFC 7807 (`application/problem+json`) e incluyen u
 | CA-03 Detección de operaciones sospechosas | `DeteccionSospechosaService` |
 | CA-04 Límite diario | `LimiteDiarioService` |
 | CA-05 Historial y resumen | `GET /api/transferencias`, `ResumenCuentaService` |
-| CA-08 Arquitectura en capas | Estructura de paquetes y `ArquitecturaTest` |
-| CA-09 Buenas prácticas | DTOs, MapStruct, ExceptionMappers centralizados, inyección por constructor |
+| CA-06 Dashboard de cuentas | `cuentas.component.ts/.html`, `cuenta.service.ts` |
+| CA-07 Formulario de transferencia | `transferencia-form.component.ts/.html`, `transferencia.service.ts`, `transferencia.validators.ts` |
+| CA-08 Arquitectura en capas | Estructura de paquetes y `ArquitecturaTest`; en el frontend `core` / `shared` / `features` |
+| CA-09 Buenas prácticas | DTOs, MapStruct, ExceptionMappers centralizados, inyección por constructor; en el frontend interceptor de errores, modelos tipados y ESLint |
 | CA-10 Documentación | Swagger UI y este README |
 
-Extras implementados: Docker Compose, pruebas unitarias, pruebas de integración, paginación,
-DTOs con MapStruct, logs estructurados y CORS.
+Extras implementados: Docker Compose (MySQL, backend y frontend), pruebas unitarias,
+pruebas de integración, paginación, DTOs con MapStruct, logs estructurados y CORS.
 
 ## Fuera del alcance
 
@@ -298,3 +406,9 @@ No se implementaron, pero serían necesarios en un entorno productivo:
 - Idempotencia de transferencias (cabecera `Idempotency-Key`) para evitar duplicados por reintentos.
 - Flujo de aprobación o rechazo de las transferencias en revisión.
 - Restricción de Swagger UI en producción.
+- Paginación y ordenamiento en el servidor para `GET /api/cuentas` (por ejemplo `?orden=saldo,desc`)
+  si el número de cuentas crece; hoy el frontend carga todas las cuentas y ordena en el cliente.
+- Búsqueda dentro de los selectores de cuentas del formulario.
+- Política `Content-Security-Policy` en nginx.
+- Generación del `X-Request-Id` cuando el frontend se sirve sin HTTPS desde un host distinto de
+  `localhost` (`crypto.randomUUID()` requiere un contexto seguro).
