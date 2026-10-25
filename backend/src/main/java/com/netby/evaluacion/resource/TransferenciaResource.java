@@ -4,28 +4,18 @@ import com.netby.evaluacion.dto.request.CrearTransferenciaRequest;
 import com.netby.evaluacion.dto.request.FiltroTransferenciasRequest;
 import com.netby.evaluacion.dto.response.PaginaResponse;
 import com.netby.evaluacion.dto.response.TransferenciaResponse;
+import com.netby.evaluacion.resource.api.TransferenciaApi;
 import com.netby.evaluacion.service.TransferenciaService;
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.ws.rs.BeanParam;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 
 import java.net.URI;
 
-@Path("/api/transferencias")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
-public class TransferenciaResource {
+/**
+ * Rutas, validaciones y documentación se declaran en {@link TransferenciaApi}; aquí solo se delega.
+ */
+public class TransferenciaResource implements TransferenciaApi {
 
     private final TransferenciaService transferenciaService;
 
@@ -34,23 +24,20 @@ public class TransferenciaResource {
         this.transferenciaService = transferenciaService;
     }
 
-    @POST
-    public Response ejecutar(@NotNull(message = "El cuerpo de la solicitud es obligatorio")
-                             @Valid CrearTransferenciaRequest request,
-                             @Context UriInfo uriInfo) {
+    @Override
+    public Response ejecutar(CrearTransferenciaRequest request, UriInfo uriInfo) {
         TransferenciaResponse transferencia = transferenciaService.ejecutar(request);
         URI ubicacion = uriInfo.getAbsolutePathBuilder().path(String.valueOf(transferencia.id())).build();
         return Response.created(ubicacion).entity(transferencia).build();
     }
 
-    @GET
-    public PaginaResponse<TransferenciaResponse> consultarHistorial(@Valid @BeanParam FiltroTransferenciasRequest filtro) {
+    @Override
+    public PaginaResponse<TransferenciaResponse> consultarHistorial(FiltroTransferenciasRequest filtro) {
         return transferenciaService.consultarHistorial(filtro);
     }
 
-    @GET
-    @Path("/{id}")
-    public TransferenciaResponse obtenerPorId(@PathParam("id") Long id) {
+    @Override
+    public TransferenciaResponse obtenerPorId(Long id) {
         return transferenciaService.obtenerPorId(id);
     }
 }
