@@ -12,16 +12,9 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.StringJoiner;
 
-/**
- * Las consultas de acumulados excluyen las transferencias rechazadas: no movieron dinero,
- * por lo que no cuentan para el límite diario ni para la detección por frecuencia.
- */
 @ApplicationScoped
 public class TransferenciaRepository implements PanacheRepository<Transferencia> {
 
-    /**
-     * Carga la transferencia junto con sus cuentas en una sola consulta.
-     */
     public Optional<Transferencia> buscarPorIdConCuentas(Long id) {
         return find("""
                 from Transferencia t
@@ -31,11 +24,6 @@ public class TransferenciaRepository implements PanacheRepository<Transferencia>
                 """, id).firstResultOptional();
     }
 
-    /**
-     * Historial con filtros opcionales, del más reciente al más antiguo. Solo se agregan al WHERE
-     * los criterios presentes; los valores siempre viajan como parámetros (sin concatenar datos
-     * del usuario en la consulta, por lo que no hay riesgo de inyección).
-     */
     public PanacheQuery<Transferencia> buscarHistorial(CriteriosHistorial criterios) {
         StringJoiner condiciones = new StringJoiner(" and ", " where ", "").setEmptyValue("");
         Parameters parametros = new Parameters();

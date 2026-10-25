@@ -24,7 +24,6 @@ class CuentaResourceTest {
     private static final String RUTA = "/api/cuentas";
     private static final String PROBLEM_JSON = "application/problem+json";
 
-    /** Genera números únicos para que las pruebas no dependan del orden ni de datos previos. */
     private static final AtomicLong SECUENCIA = new AtomicLong(System.currentTimeMillis() % 1_000_000_000L);
 
     private static String nuevoNumeroCuenta() {

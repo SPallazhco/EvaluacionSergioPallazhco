@@ -12,10 +12,6 @@ import java.util.Map;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Evita que la documentación quede desactualizada: cada endpoint debe declarar sus respuestas
- * posibles y la API debe exponerse en Swagger UI.
- */
 @QuarkusTest
 class DocumentacionOpenApiTest {
 

@@ -1,8 +1,5 @@
 package com.netby.evaluacion.resource.api;
 
-/**
- * Ejemplos de solicitudes y respuestas que se muestran en la documentación OpenAPI.
- */
 final class EjemplosApi {
 
     static final String PROBLEM_JSON = "application/problem+json";

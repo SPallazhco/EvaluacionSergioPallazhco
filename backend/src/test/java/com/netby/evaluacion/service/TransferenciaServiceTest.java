@@ -129,7 +129,7 @@ class TransferenciaServiceTest {
 
         servicio.ejecutar(solicitud("10.00"));
 
-        // El origen (222...) es mayor que el destino (111...): se bloquea primero el destino
+        // 1111111111 < 2222222222: se bloquea primero el destino
         InOrder orden = inOrder(cuentaRepository);
         orden.verify(cuentaRepository).buscarPorNumeroParaActualizar(NUMERO_DESTINO);
         orden.verify(cuentaRepository).buscarPorNumeroParaActualizar(NUMERO_ORIGEN);

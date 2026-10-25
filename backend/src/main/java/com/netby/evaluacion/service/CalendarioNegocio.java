@@ -9,10 +9,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
-/**
- * Centraliza el manejo del tiempo: la hora actual (desde un {@link Clock} inyectable) y la
- * conversión de un instante UTC al día calendario de la zona horaria de negocio.
- */
 @ApplicationScoped
 public class CalendarioNegocio {
 
@@ -29,24 +25,15 @@ public class CalendarioNegocio {
         return reloj.instant();
     }
 
-    /**
-     * Rango UTC que corresponde al día calendario (en la zona de negocio) que contiene el instante.
-     */
     public RangoFechas rangoDelDia(Instant instante) {
         LocalDate dia = instante.atZone(zonaHoraria).toLocalDate();
         return new RangoFechas(inicioDelDia(dia), finDelDia(dia));
     }
 
-    /**
-     * Primer instante (UTC) del día calendario indicado, en la zona de negocio.
-     */
     public Instant inicioDelDia(LocalDate dia) {
         return dia.atStartOfDay(zonaHoraria).toInstant();
     }
 
-    /**
-     * Límite exclusivo del día: el primer instante del día siguiente.
-     */
     public Instant finDelDia(LocalDate dia) {
         return dia.plusDays(1).atStartOfDay(zonaHoraria).toInstant();
     }

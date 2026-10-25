@@ -16,11 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Errores al convertir el JSON recibido en el DTO: tipo de dato incorrecto, valor de enum
- * inexistente o propiedad desconocida. Reemplaza el mapper genérico de Quarkus para mantener
- * el formato de error uniforme e indicar el campo afectado.
- */
 @Provider
 public class JsonInvalidoExceptionMapper implements ExceptionMapper<MismatchedInputException> {
 

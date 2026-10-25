@@ -14,9 +14,6 @@ import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-/**
- * CA-05 (b): resumen calculado en tiempo real a partir de las transferencias registradas.
- */
 @ApplicationScoped
 public class ResumenCuentaService {
 
@@ -36,10 +33,7 @@ public class ResumenCuentaService {
         this.calendario = calendario;
     }
 
-    /**
-     * Las consultas se ejecutan en una misma transacción para que todas lean la misma
-     * instantánea de datos (MySQL REPEATABLE READ) aunque otras transferencias ocurran en paralelo.
-     */
+    // Una sola transacción para que todas las consultas lean los mismos datos
     @Transactional
     public ResumenCuentaResponse obtener(Long cuentaId) {
         Cuenta cuenta = cuentaRepository.findByIdOptional(cuentaId)

@@ -11,11 +11,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Regla 3 / CA-03: una transferencia es sospechosa si su monto supera el umbral configurado
- * o si la cuenta origen ya realizó el máximo de transferencias permitido en la ventana móvil.
- * Ambas condiciones se evalúan siempre para registrar todos los motivos aplicables.
- */
 @ApplicationScoped
 public class DeteccionSospechosaService {
 

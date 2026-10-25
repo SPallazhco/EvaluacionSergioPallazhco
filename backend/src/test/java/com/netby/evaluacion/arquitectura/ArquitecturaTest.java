@@ -18,10 +18,6 @@ import static com.tngtech.archunit.library.GeneralCodingRules.NO_CLASSES_SHOULD_
 import static com.tngtech.archunit.library.GeneralCodingRules.NO_CLASSES_SHOULD_USE_JAVA_UTIL_LOGGING;
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
 
-/**
- * CA-08 verificable: estas reglas fallan la compilación si alguien rompe la arquitectura por capas
- * (Resource -> Service -> Repository) o las convenciones del proyecto.
- */
 @AnalyzeClasses(packages = "com.netby.evaluacion", importOptions = ImportOption.DoNotIncludeTests.class)
 class ArquitecturaTest {
 

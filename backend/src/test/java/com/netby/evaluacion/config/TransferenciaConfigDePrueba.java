@@ -4,9 +4,6 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.ZoneId;
 
-/**
- * Configuración con los valores del enunciado para pruebas unitarias que no levantan Quarkus.
- */
 public final class TransferenciaConfigDePrueba implements TransferenciaConfig {
 
     public static final ZoneId ZONA_ECUADOR = ZoneId.of("America/Guayaquil");

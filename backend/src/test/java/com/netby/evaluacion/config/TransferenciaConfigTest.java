@@ -9,9 +9,6 @@ import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Comprueba que la configuración real de la aplicación refleja los valores del enunciado.
- */
 @QuarkusTest
 class TransferenciaConfigTest {
 

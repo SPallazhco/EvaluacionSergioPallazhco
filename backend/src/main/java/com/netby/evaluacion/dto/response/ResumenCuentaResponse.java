@@ -4,10 +4,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.math.BigDecimal;
 
-/**
- * Resumen de la actividad de una cuenta como origen de transferencias. Los valores "del día"
- * corresponden al día calendario en curso en la zona horaria de negocio y no incluyen rechazadas.
- */
 @Schema(description = "Resumen de la cuenta calculado en tiempo real")
 public record ResumenCuentaResponse(
         @Schema(description = "Identificador de la cuenta", example = "1")

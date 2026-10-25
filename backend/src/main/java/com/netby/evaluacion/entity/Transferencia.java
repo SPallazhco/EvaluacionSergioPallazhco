@@ -44,9 +44,7 @@ public class Transferencia {
     @Column(name = "motivo")
     private String motivo;
 
-    /**
-     * Requerido por JPA.
-     */
+    // Requerido por JPA
     protected Transferencia() {
     }
 

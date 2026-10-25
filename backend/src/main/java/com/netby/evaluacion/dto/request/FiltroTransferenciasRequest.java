@@ -11,10 +11,6 @@ import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 
 import java.time.LocalDate;
 
-/**
- * Parámetros de consulta del historial. Todos los filtros son opcionales; las fechas son días
- * calendario (formato {@code yyyy-MM-dd}) en la zona horaria de negocio y ambas son inclusivas.
- */
 public record FiltroTransferenciasRequest(
 
         @Parameter(description = "Número de la cuenta origen (10 dígitos)", example = "1234567890")

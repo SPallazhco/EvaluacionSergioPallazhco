@@ -10,21 +10,13 @@ import org.jboss.logging.MDC;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-/**
- * Asigna un identificador de correlación a cada solicitud: se agrega a todas las líneas de log
- * (MDC) y se devuelve en la cabecera {@code X-Request-Id}, de modo que un error reportado por el
- * cliente se puede rastrear en los logs. Si el cliente envía un id válido se reutiliza.
- */
 @Provider
 public class CorrelacionFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
     public static final String CABECERA = "X-Request-Id";
     static final String CLAVE_MDC = "requestId";
 
-    /**
-     * Solo se acepta un id simple: evita que un valor arbitrario del cliente se escriba en los logs
-     * (inyección de logs) o los llene con cadenas enormes.
-     */
+    // Evita inyección de logs con valores enviados por el cliente
     private static final Pattern ID_VALIDO = Pattern.compile("[A-Za-z0-9-]{1,64}");
 
     @Override

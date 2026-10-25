@@ -24,7 +24,7 @@ class CalendarioNegocioTest {
 
     @Test
     void rangoDelDiaDebeCorresponderAlDiaCalendarioDeEcuador() {
-        // 24/10 a las 10:00 en Ecuador (UTC-5) -> el día va de 05:00Z del 24 a 05:00Z del 25
+        // 10:00 en Ecuador (UTC-5)
         RangoFechas rango = calendario.rangoDelDia(Instant.parse("2026-10-24T15:00:00Z"));
 
         assertThat(rango.desde()).isEqualTo(Instant.parse("2026-10-24T05:00:00Z"));
@@ -33,7 +33,7 @@ class CalendarioNegocioTest {
 
     @Test
     void unaTransferenciaNocturnaEnEcuadorPerteneceAlDiaLocalAunqueEnUtcSeaElDiaSiguiente() {
-        // 23/10 a las 22:30 en Ecuador = 24/10 a las 03:30 UTC: pertenece al día 23
+        // 22:30 del 23 en Ecuador = 03:30 del 24 en UTC
         RangoFechas rango = calendario.rangoDelDia(Instant.parse("2026-10-24T03:30:00Z"));
 
         assertThat(rango.desde()).isEqualTo(Instant.parse("2026-10-23T05:00:00Z"));

@@ -48,16 +48,7 @@ public class TransferenciaService {
         this.transferenciaMapper = transferenciaMapper;
     }
 
-    /**
-     * Ejecuta la transferencia de forma atómica: ambos saldos y el registro se confirman juntos.
-     * <p>
-     * Si se incumple una regla de negocio, la transferencia se registra como RECHAZADA y la
-     * transacción se confirma igualmente ({@code dontRollbackOn}) para conservar ese registro;
-     * es seguro porque todas las reglas se validan antes de modificar cualquier saldo.
-     * Se usa una única transacción a propósito: registrar el rechazo en una transacción nueva
-     * ({@code REQUIRES_NEW}) se bloquearía esperando las filas de cuenta que esta mantiene
-     * bloqueadas, ya que la verificación de la llave foránea necesita leerlas.
-     */
+    // El rechazo se guarda en esta misma transacción; con REQUIRES_NEW quedaría bloqueado
     @Transactional(dontRollbackOn = ReglaNegocioException.class)
     public TransferenciaResponse ejecutar(CrearTransferenciaRequest request) {
         Instant ahora = calendario.ahora();
@@ -119,11 +110,7 @@ public class TransferenciaService {
                         "No existe una transferencia con id " + id));
     }
 
-    /**
-     * Bloquea ambas cuentas siempre en el mismo orden (por número de cuenta). Si dos transferencias
-     * cruzadas (A→B y B→A) bloquearan en el orden de la solicitud, cada una podría quedarse esperando
-     * la cuenta que tiene la otra: un deadlock.
-     */
+    // Orden fijo por número de cuenta para evitar deadlocks
     private CuentasBloqueadas bloquearCuentas(String numeroOrigen, String numeroDestino) {
         boolean origenPrimero = numeroOrigen.compareTo(numeroDestino) < 0;
         Cuenta primera = buscarParaActualizar(origenPrimero ? numeroOrigen : numeroDestino);

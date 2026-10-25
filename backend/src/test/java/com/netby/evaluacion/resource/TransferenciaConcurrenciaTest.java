@@ -18,18 +18,11 @@ import static com.netby.evaluacion.resource.ApiDePrueba.saldoDe;
 import static com.netby.evaluacion.resource.ApiDePrueba.transferir;
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Lanza transferencias simultáneas reales contra la API y MySQL para comprobar que el bloqueo
- * pesimista evita saldos inconsistentes y que el orden de bloqueo evita deadlocks.
- */
 @QuarkusTest
 class TransferenciaConcurrenciaTest {
 
     private static final int HILOS = 10;
 
-    /**
-     * Ejecuta todas las tareas a la vez (una barrera las libera juntas) y devuelve los códigos HTTP.
-     */
     private static List<Integer> ejecutarEnParalelo(List<Callable<Integer>> tareas) throws Exception {
         ExecutorService executor = Executors.newFixedThreadPool(tareas.size());
         try {
@@ -65,7 +58,7 @@ class TransferenciaConcurrenciaTest {
 
         List<Integer> codigos = ejecutarEnParalelo(tareas);
 
-        // Solo alcanza para 5 transferencias de 200: las demás deben rechazarse por saldo insuficiente
+        // El saldo solo alcanza para 5 transferencias
         assertThat(codigos).filteredOn(c -> c == 201).hasSize(5);
         assertThat(codigos).filteredOn(c -> c == 422).hasSize(5);
         assertThat(saldoDe(origen)).isEqualByComparingTo("0.00");

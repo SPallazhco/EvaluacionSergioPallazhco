@@ -19,11 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Valida las consultas de acumulados e historial contra MySQL real. Cada prueba hace rollback al terminar.
- * Los datos se crean dentro de cada prueba: con {@code @TestTransaction}, un {@code @BeforeEach}
- * se ejecuta en su propia transacción y también hace rollback.
- */
+// Los datos se crean en cada prueba: un @BeforeEach correría en otra transacción
 @QuarkusTest
 @TestTransaction
 class TransferenciaRepositoryTest {

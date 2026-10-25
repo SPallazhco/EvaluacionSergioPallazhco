@@ -9,10 +9,6 @@ import jakarta.inject.Inject;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-/**
- * Regla 4 / CA-04: ninguna cuenta puede transferir más del límite configurado en un día
- * calendario. El día se determina en la zona horaria de negocio y se consulta como rango UTC.
- */
 @ApplicationScoped
 public class LimiteDiarioService {
 
@@ -37,17 +33,10 @@ public class LimiteDiarioService {
         return disponibleSegunAcumulado(totalTransferidoEnElDia(cuentaOrigenId, instante));
     }
 
-    /**
-     * Lo que aún puede transferirse dado lo ya transferido en el día; nunca negativo.
-     */
     public BigDecimal disponibleSegunAcumulado(BigDecimal totalTransferidoEnElDia) {
         return limiteDiario.subtract(totalTransferidoEnElDia).max(BigDecimal.ZERO);
     }
 
-    /**
-     * @throws LimiteDiarioExcedidoException si el monto haría superar el límite del día,
-     *                                       indicando cuánto queda disponible
-     */
     public void validar(Long cuentaOrigenId, BigDecimal monto, Instant instante) {
         BigDecimal disponible = montoDisponible(cuentaOrigenId, instante);
         if (monto.compareTo(disponible) > 0) {

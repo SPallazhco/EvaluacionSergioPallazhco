@@ -9,9 +9,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static io.restassured.RestAssured.given;
 
-/**
- * Operaciones de apoyo para pruebas de integración que trabajan a través de la API.
- */
 final class ApiDePrueba {
 
     private static final AtomicLong SECUENCIA = new AtomicLong(System.nanoTime() % 1_000_000_000L);

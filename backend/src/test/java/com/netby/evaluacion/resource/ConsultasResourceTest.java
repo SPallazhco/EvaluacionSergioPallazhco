@@ -17,9 +17,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasItem;
 
-/**
- * CA-05: historial de transferencias con filtros y resumen de cuenta, contra la API y MySQL.
- */
 @QuarkusTest
 class ConsultasResourceTest {
 

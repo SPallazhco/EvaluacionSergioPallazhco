@@ -3,9 +3,9 @@ CREATE TABLE transferencia (
     cuenta_origen_id  BIGINT         NOT NULL,
     cuenta_destino_id BIGINT         NOT NULL,
     monto             DECIMAL(15, 2) NOT NULL,
-    fecha             DATETIME(6)    NOT NULL COMMENT 'Fecha y hora en UTC',
+    fecha             DATETIME(6)    NOT NULL COMMENT 'UTC',
     estado            VARCHAR(20)    NOT NULL,
-    motivo            VARCHAR(255)   NULL COMMENT 'Causa del rechazo o de la marca de revisión',
+    motivo            VARCHAR(255)   NULL,
     CONSTRAINT pk_transferencia PRIMARY KEY (id),
     CONSTRAINT fk_transferencia_cuenta_origen FOREIGN KEY (cuenta_origen_id) REFERENCES cuenta (id),
     CONSTRAINT fk_transferencia_cuenta_destino FOREIGN KEY (cuenta_destino_id) REFERENCES cuenta (id),
@@ -16,11 +16,11 @@ CREATE TABLE transferencia (
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- Límite diario, regla de "más de 5 en la última hora", resumen y filtro por cuenta origen
+-- Límite diario, regla por hora, resumen y filtro por origen
 CREATE INDEX idx_transferencia_origen_fecha ON transferencia (cuenta_origen_id, fecha);
 
--- Filtro del historial por cuenta destino
+-- Filtro por destino
 CREATE INDEX idx_transferencia_destino_fecha ON transferencia (cuenta_destino_id, fecha);
 
--- Historial sin filtro de cuenta, ordenado por fecha descendente
+-- Historial ordenado por fecha
 CREATE INDEX idx_transferencia_fecha ON transferencia (fecha);

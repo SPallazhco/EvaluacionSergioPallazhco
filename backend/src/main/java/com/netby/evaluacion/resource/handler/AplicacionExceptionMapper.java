@@ -11,10 +11,6 @@ import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
-/**
- * Traduce las excepciones de negocio a respuestas HTTP. Al ser {@link AplicacionException}
- * una jerarquía sellada, el switch es exhaustivo: una categoría nueva sin mapear no compila.
- */
 @Provider
 public class AplicacionExceptionMapper implements ExceptionMapper<AplicacionException> {
 
@@ -22,7 +18,7 @@ public class AplicacionExceptionMapper implements ExceptionMapper<AplicacionExce
 
     @Override
     public Response toResponse(AplicacionException exception) {
-        // El mensaje puede incluir datos del cliente (p. ej. número de cuenta): solo se registra el código
+        // No se registra el mensaje porque puede incluir datos del cliente
         Log.warnf("Solicitud rechazada por regla de negocio: %s", exception.getCodigo());
 
         ProblemaResponse problema = switch (exception) {

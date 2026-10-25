@@ -8,10 +8,6 @@ import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
-/**
- * Captura cualquier error no previsto: lo registra completo en el log y responde un mensaje
- * genérico, sin exponer detalles internos (stack trace, SQL, nombres de clases) al cliente.
- */
 @Provider
 public class ErrorInesperadoExceptionMapper implements ExceptionMapper<Exception> {
 

@@ -12,10 +12,6 @@ import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Cubre los mappers cuyos escenarios son difíciles de provocar desde una prueba HTTP
- * (condiciones de carrera en base de datos y fallos inesperados).
- */
 class ExceptionMappersTest {
 
     @Test

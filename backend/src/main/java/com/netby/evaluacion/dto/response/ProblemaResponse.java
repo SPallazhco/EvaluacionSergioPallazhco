@@ -8,11 +8,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Cuerpo de error según RFC 7807 (Problem Details for HTTP APIs), extendido con
- * un código de negocio estable, la fecha del error, el detalle por campo y datos
- * estructurados propios de cada regla de negocio.
- */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Schema(description = "Error en formato RFC 7807 (application/problem+json)")
 public record ProblemaResponse(

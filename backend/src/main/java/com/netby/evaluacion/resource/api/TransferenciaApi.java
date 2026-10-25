@@ -30,10 +30,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import static com.netby.evaluacion.resource.api.EjemplosApi.PROBLEM_JSON;
 
-/**
- * Contrato HTTP de transferencias: rutas, validaciones y documentación OpenAPI. La implementación
- * ({@code TransferenciaResource}) solo delega en la capa de servicio.
- */
 @Path("/api/transferencias")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

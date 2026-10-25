@@ -9,10 +9,6 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import org.hibernate.exception.ConstraintViolationException;
 
-/**
- * Último resguardo ante violaciones de restricciones de la base de datos (p. ej. dos registros
- * concurrentes con el mismo número de cuenta que superan la validación previa del servicio).
- */
 @Provider
 public class ConflictoDatosExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
 

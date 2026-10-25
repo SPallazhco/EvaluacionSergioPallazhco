@@ -12,9 +12,6 @@ import jakarta.ws.rs.core.UriInfo;
 
 import java.net.URI;
 
-/**
- * Rutas, validaciones y documentación se declaran en {@link TransferenciaApi}; aquí solo se delega.
- */
 public class TransferenciaResource implements TransferenciaApi {
 
     private final TransferenciaService transferenciaService;

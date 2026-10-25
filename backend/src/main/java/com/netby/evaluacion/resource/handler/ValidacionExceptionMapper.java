@@ -14,9 +14,6 @@ import jakarta.ws.rs.ext.Provider;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * Convierte los errores de Bean Validation en un 400 con el detalle de cada campo inválido.
- */
 @Provider
 public class ValidacionExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
 
@@ -33,10 +30,6 @@ public class ValidacionExceptionMapper implements ExceptionMapper<ConstraintViol
                 "La solicitud contiene datos inválidos", CodigoError.SOLICITUD_INVALIDA, errores));
     }
 
-    /**
-     * La ruta de la violación incluye método y parámetro (p. ej. {@code registrar.request.titular});
-     * al cliente solo le interesa el último nodo.
-     */
     private static String nombreCampo(ConstraintViolation<?> violacion) {
         String campo = null;
         for (Path.Node nodo : violacion.getPropertyPath()) {

@@ -8,10 +8,6 @@ import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
-/**
- * Unifica el formato de los errores que genera el propio framework (ruta inexistente,
- * método no permitido, JSON mal formado, etc.) conservando su código HTTP.
- */
 @Provider
 public class WebApplicationExceptionMapper implements ExceptionMapper<WebApplicationException> {
 

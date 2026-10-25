@@ -14,10 +14,6 @@ public class CuentaRepository implements PanacheRepository<Cuenta> {
         return count("numeroCuenta", numeroCuenta) > 0;
     }
 
-    /**
-     * Obtiene la cuenta con bloqueo de escritura ({@code SELECT ... FOR UPDATE}): otra transacción
-     * que intente bloquear la misma fila espera hasta que esta termine. Requiere transacción activa.
-     */
     public Optional<Cuenta> buscarPorNumeroParaActualizar(String numeroCuenta) {
         return find("numeroCuenta", numeroCuenta)
                 .withLock(LockModeType.PESSIMISTIC_WRITE)

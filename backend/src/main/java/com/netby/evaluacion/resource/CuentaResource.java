@@ -13,9 +13,6 @@ import jakarta.ws.rs.core.UriInfo;
 
 import java.net.URI;
 
-/**
- * Rutas, validaciones y documentación se declaran en {@link CuentaApi}; aquí solo se delega.
- */
 public class CuentaResource implements CuentaApi {
 
     private final CuentaService cuentaService;

@@ -43,9 +43,7 @@ public class Cuenta {
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private Instant fechaCreacion;
 
-    /**
-     * Requerido por JPA.
-     */
+    // Requerido por JPA
     protected Cuenta() {
     }
 
@@ -65,12 +63,9 @@ public class Cuenta {
         return saldo.compareTo(monto) >= 0;
     }
 
-    /**
-     * Resta el monto del saldo. Las reglas de negocio se validan en la capa de servicio;
-     * esta verificación solo protege el invariante de que el saldo nunca sea negativo.
-     */
     public void debitar(BigDecimal monto) {
         validarMontoPositivo(monto);
+        // Respaldo: el servicio ya valida el saldo antes de debitar
         if (!tieneSaldoSuficiente(monto)) {
             throw new IllegalStateException("El saldo de la cuenta no puede quedar negativo");
         }

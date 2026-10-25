@@ -14,11 +14,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-/**
- * Convierte fechas y enums recibidos como parámetros. Por especificación, JAX-RS responde 404 cuando
- * un parámetro no se puede convertir; este proveedor responde 400 indicando el parámetro y el
- * formato esperado, que es lo que el cliente necesita para corregir la solicitud.
- */
+// Responde 400 en lugar del 404 que JAX-RS devuelve si un parámetro no se puede convertir
 @Provider
 public class ParametroConverterProvider implements ParamConverterProvider {
 

@@ -14,10 +14,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * Verifica el mapeo de {@link Transferencia} contra MySQL real: relaciones, almacenamiento
- * de fechas en UTC y las restricciones definidas en la migración. Cada prueba hace rollback.
- */
 @QuarkusTest
 class TransferenciaPersistenciaTest {
 
@@ -53,8 +49,7 @@ class TransferenciaPersistenciaTest {
         assertThat(leida.getCuentaOrigen().getId()).isEqualTo(origen.getId());
         assertThat(leida.getCuentaDestino().getId()).isEqualTo(destino.getId());
 
-        // Las 22:30 del 23 en Ecuador son las 03:30 del 24 en UTC: la columna debe guardar UTC.
-        // MySQL formatea el valor para leerlo tal cual está almacenado, sin conversiones del driver.
+        // 22:30 del 23 en Ecuador = 03:30 del 24 en UTC
         Object valorEnColumna = entityManager
                 .createNativeQuery("SELECT DATE_FORMAT(fecha, '%Y-%m-%d %H:%i:%s') FROM transferencia WHERE id = :id")
                 .setParameter("id", transferencia.getId())
