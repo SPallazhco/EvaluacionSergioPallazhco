@@ -1,0 +1,98 @@
+<section class="cuentas" aria-labelledby="titulo-cuentas">
+  <header class="cuentas__encabezado">
+    <h2 id="titulo-cuentas" class="cuentas__titulo">Cuentas bancarias</h2>
+    <button mat-stroked-button type="button" [disabled]="cuentas.isLoading()" (click)="recargar()">
+      <mat-icon aria-hidden="true">refresh</mat-icon>
+      Actualizar
+    </button>
+  </header>
+
+  @if (cuentas.isLoading()) {
+    <mat-progress-bar mode="indeterminate" aria-label="Cargando cuentas" />
+  }
+
+  @if (cuentas.error()) {
+    <div class="cuentas__error" role="alert">
+      <span>{{ mensajeError() }}</span>
+      <button mat-button type="button" (click)="recargar()">Reintentar</button>
+    </div>
+  } @else {
+    <div class="cuentas__tabla">
+      <table
+        mat-table
+        matSort
+        matSortDisableClear
+        [dataSource]="cuentasPagina()"
+        (matSortChange)="ordenar($event)"
+      >
+        <caption class="cdk-visually-hidden">
+          Cuentas bancarias registradas
+        </caption>
+
+        <ng-container matColumnDef="numeroCuenta">
+          <th mat-header-cell *matHeaderCellDef scope="col">Número de cuenta</th>
+          <td mat-cell *matCellDef="let cuenta; datos: cuentasPagina()" class="cuentas__numero">
+            {{ cuenta.numeroCuenta }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="titular">
+          <th mat-header-cell *matHeaderCellDef scope="col">Titular</th>
+          <td mat-cell *matCellDef="let cuenta; datos: cuentasPagina()">{{ cuenta.titular }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="tipo">
+          <th mat-header-cell *matHeaderCellDef scope="col">Tipo</th>
+          <td mat-cell *matCellDef="let cuenta; datos: cuentasPagina()">
+            {{ etiquetasTipo[cuenta.tipo] }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="saldo">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+            arrowPosition="before"
+            sortActionDescription="Ordenar por saldo"
+            scope="col"
+            class="cuentas__monto"
+          >
+            Saldo
+          </th>
+          <td mat-cell *matCellDef="let cuenta; datos: cuentasPagina()" class="cuentas__monto">
+            {{ cuenta.saldo | currency }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef scope="col">Estado</th>
+          <td mat-cell *matCellDef="let cuenta; datos: cuentasPagina()">
+            <span class="estado" [class.estado--inactiva]="cuenta.estado === 'INACTIVA'">
+              {{ etiquetasEstado[cuenta.estado] }}
+            </span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let cuenta; columns: columnas"></tr>
+        <tr class="mat-mdc-row" *matNoDataRow>
+          <td class="mat-mdc-cell cuentas__vacio" [attr.colspan]="columnas.length">
+            @if (!cuentas.isLoading()) {
+              No hay cuentas registradas.
+            }
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <mat-paginator
+      [length]="cuentasOrdenadas().length"
+      [pageIndex]="indicePagina()"
+      [pageSize]="tamanioPagina()"
+      [pageSizeOptions]="opcionesTamanioPagina"
+      (page)="cambiarPagina($event)"
+      aria-label="Paginación de cuentas"
+    />
+  }
+</section>

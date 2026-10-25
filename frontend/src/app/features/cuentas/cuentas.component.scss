@@ -1,0 +1,70 @@
+.cuentas {
+  background-color: var(--mat-sys-surface);
+  border-radius: var(--mat-sys-corner-large);
+  box-shadow: var(--mat-sys-level1);
+  overflow: hidden;
+}
+
+.cuentas__encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+}
+
+.cuentas__titulo {
+  margin: 0;
+  font: var(--mat-sys-title-large);
+}
+
+.cuentas__tabla {
+  overflow-x: auto;
+
+  th {
+    white-space: nowrap;
+  }
+}
+
+.cuentas__numero,
+.cuentas__monto {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.cuentas__monto {
+  text-align: right;
+}
+
+.cuentas__vacio {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.cuentas__error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 1.5rem 1.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--mat-sys-corner-small);
+  background-color: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+}
+
+.estado {
+  display: inline-block;
+  padding: 0.125rem 0.625rem;
+  border-radius: var(--mat-sys-corner-full);
+  font: var(--mat-sys-label-medium);
+  background-color: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+
+.estado--inactiva {
+  background-color: var(--mat-sys-surface-container-highest);
+  color: var(--mat-sys-on-surface-variant);
+}
