@@ -8,6 +8,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Optional;
 
 /**
  * Las consultas de acumulados excluyen las transferencias rechazadas: no movieron dinero,
@@ -15,6 +16,18 @@ import java.time.Instant;
  */
 @ApplicationScoped
 public class TransferenciaRepository implements PanacheRepository<Transferencia> {
+
+    /**
+     * Carga la transferencia junto con sus cuentas en una sola consulta.
+     */
+    public Optional<Transferencia> buscarPorIdConCuentas(Long id) {
+        return find("""
+                from Transferencia t
+                join fetch t.cuentaOrigen
+                join fetch t.cuentaDestino
+                where t.id = ?1
+                """, id).firstResultOptional();
+    }
 
     public long contarEjecutadasDesde(Long cuentaOrigenId, Instant desde) {
         return count("cuentaOrigen.id = :cuentaId and fecha >= :desde and estado <> :rechazada",
