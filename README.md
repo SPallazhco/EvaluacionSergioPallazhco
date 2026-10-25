@@ -23,16 +23,16 @@ dashboard en Angular para visualizar cuentas y ejecutar transferencias.
 
 ## Stack
 
-| Capa | Tecnología |
-|---|---|
-| Backend | Java 21, Quarkus 3.33 LTS (Quarkus REST, Hibernate ORM con Panache, Hibernate Validator) |
-| Frontend | Angular 22 (standalone, zoneless, signals), Angular Material 22, TypeScript 6 |
-| Base de datos | MySQL 8.4, migraciones con Flyway |
-| Mapeo de DTOs | MapStruct |
-| Documentación API | OpenAPI 3 / Swagger UI |
-| Pruebas | JUnit 5, Mockito, RestAssured, AssertJ, ArchUnit, JaCoCo (backend); Vitest (frontend) |
-| Calidad del frontend | ESLint con typescript-eslint, angular-eslint y SonarJS; Prettier |
-| Contenedores | Docker, Docker Compose, nginx |
+| Capa                 | Tecnología                                                                               |
+| -------------------- | ---------------------------------------------------------------------------------------- |
+| Backend              | Java 21, Quarkus 3.33 LTS (Quarkus REST, Hibernate ORM con Panache, Hibernate Validator) |
+| Frontend             | Angular 22 (standalone, zoneless, signals), Angular Material 22, TypeScript 6            |
+| Base de datos        | MySQL 8.4, migraciones con Flyway                                                        |
+| Mapeo de DTOs        | MapStruct                                                                                |
+| Documentación API    | OpenAPI 3 / Swagger UI                                                                   |
+| Pruebas              | JUnit 5, Mockito, RestAssured, AssertJ, ArchUnit, JaCoCo (backend); Vitest (frontend)    |
+| Calidad del frontend | ESLint con typescript-eslint, angular-eslint y SonarJS; Prettier                         |
+| Contenedores         | Docker, Docker Compose, nginx                                                            |
 
 ```
 EvaluacionSergioPallazhco/
@@ -50,13 +50,13 @@ Requisito: Docker con Docker Compose.
 docker compose up -d --build
 ```
 
-| Servicio | URL |
-|---|---|
-| Frontend | http://localhost:4200 |
-| API | http://localhost:8080/api |
-| Swagger UI | http://localhost:8080/q/swagger-ui |
-| Health check | http://localhost:8080/q/health |
-| MySQL | localhost:3307 (base `transferencias`, usuario `transferencias`, clave `transferencias`) |
+| Servicio     | URL                                                                                      |
+| ------------ | ---------------------------------------------------------------------------------------- |
+| Frontend     | http://localhost:4200                                                                    |
+| API          | http://localhost:8080/api                                                                |
+| Swagger UI   | http://localhost:8080/q/swagger-ui                                                       |
+| Health check | http://localhost:8080/q/health                                                           |
+| MySQL        | localhost:3307 (base `transferencias`, usuario `transferencias`, clave `transferencias`) |
 
 La primera construcción descarga dependencias y tarda unos minutos. Para detener el entorno:
 
@@ -113,10 +113,10 @@ se define en `frontend/src/environments/environment*.ts`.
 El esquema se crea con Flyway al iniciar la aplicación. Los scripts están en
 `backend/src/main/resources/db/migration`:
 
-| Script | Contenido |
-|---|---|
-| `V1__crear_tabla_cuenta.sql` | Tabla `cuenta` con unicidad del número, formato de 10 dígitos y saldo no negativo |
-| `V2__crear_tabla_transferencia.sql` | Tabla `transferencia` con llaves foráneas, restricciones e índices de consulta |
+| Script                              | Contenido                                                                         |
+| ----------------------------------- | --------------------------------------------------------------------------------- |
+| `V1__crear_tabla_cuenta.sql`        | Tabla `cuenta` con unicidad del número, formato de 10 dígitos y saldo no negativo |
+| `V2__crear_tabla_transferencia.sql` | Tabla `transferencia` con llaves foráneas, restricciones e índices de consulta    |
 
 Si se prefiere crear la base de datos manualmente:
 
@@ -144,13 +144,13 @@ cd backend
 Las pruebas de integración usan un MySQL real en Docker (Dev Services), por lo que Docker debe
 estar en ejecución. El reporte de cobertura queda en `backend/target/jacoco-report/index.html`.
 
-| Tipo de prueba | Qué valida |
-|---|---|
+| Tipo de prueba                | Qué valida                                                                             |
+| ----------------------------- | -------------------------------------------------------------------------------------- |
 | Unitarias (JUnit 5 + Mockito) | Servicios de negocio: detección de sospechosas, límite diario, transferencias, resumen |
-| Integración (`@QuarkusTest`) | Endpoints contra MySQL real: códigos HTTP, validaciones, filtros, persistencia |
-| Concurrencia | Transferencias simultáneas sobre la misma cuenta y transferencias cruzadas A→B / B→A |
-| Arquitectura (ArchUnit) | Separación de capas, ausencia de ciclos, inyección por constructor |
-| Documentación | Cada endpoint documenta sus respuestas en OpenAPI |
+| Integración (`@QuarkusTest`)  | Endpoints contra MySQL real: códigos HTTP, validaciones, filtros, persistencia         |
+| Concurrencia                  | Transferencias simultáneas sobre la misma cuenta y transferencias cruzadas A→B / B→A   |
+| Arquitectura (ArchUnit)       | Separación de capas, ausencia de ciclos, inyección por constructor                     |
+| Documentación                 | Cada endpoint documenta sus respuestas en OpenAPI                                      |
 
 ### Frontend
 
@@ -162,26 +162,26 @@ npm run format:check    # formato con Prettier
 npm run build           # build de producción en dist/transferencias-web
 ```
 
-| Tipo de prueba | Qué valida |
-|---|---|
-| Servicios | Solicitudes HTTP, carga de todas las páginas de cuentas, cuerpo exacto de la transferencia |
-| Interceptores | Cabecera `X-Request-Id` y conversión de errores RFC 7807 |
-| Validaciones | Campos requeridos, monto numérico, mayor a cero y con 2 decimales, cuentas distintas |
-| Componentes | Tabla y ordenamiento por saldo, formulario, mensajes del backend y refresco de saldos |
+| Tipo de prueba | Qué valida                                                                                 |
+| -------------- | ------------------------------------------------------------------------------------------ |
+| Servicios      | Solicitudes HTTP, carga de todas las páginas de cuentas, cuerpo exacto de la transferencia |
+| Interceptores  | Cabecera `X-Request-Id` y conversión de errores RFC 7807                                   |
+| Validaciones   | Campos requeridos, monto numérico, mayor a cero y con 2 decimales, cuentas distintas       |
+| Componentes    | Tabla y ordenamiento por saldo, formulario, mensajes del backend y refresco de saldos      |
 
 ## Documentación de la API
 
 Swagger UI: http://localhost:8080/q/swagger-ui — documento OpenAPI: http://localhost:8080/q/openapi
 
-| Método | Ruta | Descripción | Respuestas |
-|---|---|---|---|
-| POST | `/api/cuentas` | Registrar una cuenta | 201, 400, 409 |
-| GET | `/api/cuentas?pagina=0&tamanio=20` | Listar cuentas (paginado) | 200, 400 |
-| GET | `/api/cuentas/{id}` | Obtener una cuenta | 200, 404 |
-| GET | `/api/cuentas/{id}/resumen` | Resumen del día de una cuenta | 200, 404 |
-| POST | `/api/transferencias` | Ejecutar una transferencia | 201, 400, 404, 422 |
-| GET | `/api/transferencias` | Historial con filtros (paginado) | 200, 400 |
-| GET | `/api/transferencias/{id}` | Obtener una transferencia | 200, 404 |
+| Método | Ruta                               | Descripción                      | Respuestas         |
+| ------ | ---------------------------------- | -------------------------------- | ------------------ |
+| POST   | `/api/cuentas`                     | Registrar una cuenta             | 201, 400, 409      |
+| GET    | `/api/cuentas?pagina=0&tamanio=20` | Listar cuentas (paginado)        | 200, 400           |
+| GET    | `/api/cuentas/{id}`                | Obtener una cuenta               | 200, 404           |
+| GET    | `/api/cuentas/{id}/resumen`        | Resumen del día de una cuenta    | 200, 404           |
+| POST   | `/api/transferencias`              | Ejecutar una transferencia       | 201, 400, 404, 422 |
+| GET    | `/api/transferencias`              | Historial con filtros (paginado) | 200, 400           |
+| GET    | `/api/transferencias/{id}`         | Obtener una transferencia        | 200, 404           |
 
 Filtros del historial (todos opcionales): `cuentaOrigen`, `cuentaDestino` (número de cuenta),
 `fechaDesde`, `fechaHasta` (`yyyy-MM-dd`, inclusivas), `estado` (`COMPLETADA`, `RECHAZADA`,
@@ -204,13 +204,13 @@ curl 'http://localhost:8080/api/transferencias?cuentaOrigen=1111111111&estado=CO
 
 ## Reglas de negocio y supuestos
 
-| Regla | Implementación |
-|---|---|
-| Cuenta | Número único de 10 dígitos, titular, tipo (`AHORRO`/`CORRIENTE`), saldo inicial ≥ 0, estado (`ACTIVA`/`INACTIVA`) |
+| Regla                | Implementación                                                                                                           |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Cuenta               | Número único de 10 dígitos, titular, tipo (`AHORRO`/`CORRIENTE`), saldo inicial ≥ 0, estado (`ACTIVA`/`INACTIVA`)        |
 | Transferencia válida | Ambas cuentas existen y están activas, son distintas, el monto es mayor a cero y la cuenta origen tiene saldo suficiente |
-| Atomicidad | Débito, crédito y registro de la transferencia en una sola transacción |
-| Operación sospechosa | Monto mayor a 5,000.00, o la cuenta origen ya realizó 5 transferencias en la última hora |
-| Límite diario | Una cuenta no puede transferir más de 10,000.00 en un día calendario; el rechazo indica el monto disponible |
+| Atomicidad           | Débito, crédito y registro de la transferencia en una sola transacción                                                   |
+| Operación sospechosa | Monto mayor a 5,000.00, o la cuenta origen ya realizó 5 transferencias en la última hora                                 |
+| Límite diario        | Una cuenta no puede transferir más de 10,000.00 en un día calendario; el rechazo indica el monto disponible              |
 
 Supuestos tomados donde el enunciado es ambiguo:
 
@@ -224,8 +224,7 @@ Supuestos tomados donde el enunciado es ambiguo:
 - **Qué cuenta para los acumulados**: las transferencias `COMPLETADA` y `EN_REVISION` (movieron
   dinero). Las `RECHAZADA` no cuentan para el límite diario, la regla por hora ni el resumen.
 - **Transferencias rechazadas**: las que incumplen una regla de negocio (cuenta inactiva, saldo
-  insuficiente, límite diario) se registran con estado `RECHAZADA` y su motivo, y se responde
-  422. Las solicitudes mal formadas (400) o con cuentas inexistentes (404) no se registran porque
+  insuficiente, límite diario) se registran con estado `RECHAZADA` y su motivo, y se responde 422. Las solicitudes mal formadas (400) o con cuentas inexistentes (404) no se registran porque
   no hay una transferencia válida que asociar.
 - **Cuenta duplicada** responde 409 Conflict.
 - **Resumen**: los valores del día se refieren a la cuenta como origen. Se informan las
@@ -265,13 +264,13 @@ com.netby.evaluacion
 └── config          Configuración de reglas y reloj
 ```
 
-| Archivo esperado | Ubicación |
-|---|---|
-| `CuentaResource`, `TransferenciaResource` | `resource/` (contratos en `resource/api/CuentaApi`, `TransferenciaApi`) |
-| `CuentaService`, `TransferenciaService` | `service/` |
-| `DeteccionSospechosaService`, `LimiteDiarioService` | `service/` |
-| `CuentaRepository`, `TransferenciaRepository` | `repository/` |
-| `Cuenta`, `Transferencia` | `entity/` |
+| Archivo esperado                                    | Ubicación                                                               |
+| --------------------------------------------------- | ----------------------------------------------------------------------- |
+| `CuentaResource`, `TransferenciaResource`           | `resource/` (contratos en `resource/api/CuentaApi`, `TransferenciaApi`) |
+| `CuentaService`, `TransferenciaService`             | `service/`                                                              |
+| `DeteccionSospechosaService`, `LimiteDiarioService` | `service/`                                                              |
+| `CuentaRepository`, `TransferenciaRepository`       | `repository/`                                                           |
+| `Cuenta`, `Transferencia`                           | `entity/`                                                               |
 
 Principios aplicados:
 
@@ -316,9 +315,9 @@ frontend/src/app
     └── dashboard       Página que compone la tabla y el formulario (carga diferida)
 ```
 
-| Archivo esperado | Ubicación |
-|---|---|
-| `cuentas.component.ts`, `cuentas.component.html`, `cuenta.service.ts` | `frontend/src/app/features/cuentas/` |
+| Archivo esperado                                                                                   | Ubicación                                   |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `cuentas.component.ts`, `cuentas.component.html`, `cuenta.service.ts`                              | `frontend/src/app/features/cuentas/`        |
 | `transferencia-form.component.ts`, `transferencia-form.component.html`, `transferencia.service.ts` | `frontend/src/app/features/transferencias/` |
 
 ### Decisiones de diseño
@@ -356,17 +355,17 @@ Los errores siguen el formato RFC 7807 (`application/problem+json`) e incluyen u
   "detail": "La transferencia supera el límite diario de 10000.00. Monto disponible hoy: 1000.00",
   "codigo": "LIMITE_DIARIO_EXCEDIDO",
   "timestamp": "2026-10-24T15:30:00Z",
-  "detalles": { "limiteDiario": 10000.00, "montoDisponible": 1000.00 }
+  "detalles": { "limiteDiario": 10000.0, "montoDisponible": 1000.0 }
 }
 ```
 
-| HTTP | Códigos |
-|---|---|
-| 400 | `SOLICITUD_INVALIDA` (con detalle por campo en `errores`) |
-| 404 | `CUENTA_NO_ENCONTRADA`, `TRANSFERENCIA_NO_ENCONTRADA`, `RECURSO_NO_ENCONTRADO` |
-| 409 | `CUENTA_DUPLICADA`, `CONFLICTO_DE_DATOS` |
-| 422 | `CUENTA_INACTIVA`, `SALDO_INSUFICIENTE`, `LIMITE_DIARIO_EXCEDIDO` |
-| 500 | `ERROR_INTERNO` (sin detalles internos; el error completo queda en el log) |
+| HTTP | Códigos                                                                        |
+| ---- | ------------------------------------------------------------------------------ |
+| 400  | `SOLICITUD_INVALIDA` (con detalle por campo en `errores`)                      |
+| 404  | `CUENTA_NO_ENCONTRADA`, `TRANSFERENCIA_NO_ENCONTRADA`, `RECURSO_NO_ENCONTRADO` |
+| 409  | `CUENTA_DUPLICADA`, `CONFLICTO_DE_DATOS`                                       |
+| 422  | `CUENTA_INACTIVA`, `SALDO_INSUFICIENTE`, `LIMITE_DIARIO_EXCEDIDO`              |
+| 500  | `ERROR_INTERNO` (sin detalles internos; el error completo queda en el log)     |
 
 ## Observabilidad
 
@@ -382,33 +381,18 @@ Los errores siguen el formato RFC 7807 (`application/problem+json`) e incluyen u
 
 ## Criterios de la evaluación
 
-| Criterio | Dónde |
-|---|---|
-| CA-01 Registro y listado de cuentas | `CuentaApi`, `CuentaResource`, `CuentaService`, `Cuenta` |
-| CA-02 Transferencias con validaciones | `TransferenciaApi`, `TransferenciaResource`, `TransferenciaService`, `Transferencia` |
-| CA-03 Detección de operaciones sospechosas | `DeteccionSospechosaService` |
-| CA-04 Límite diario | `LimiteDiarioService` |
-| CA-05 Historial y resumen | `GET /api/transferencias`, `ResumenCuentaService` |
-| CA-06 Dashboard de cuentas | `cuentas.component.ts/.html`, `cuenta.service.ts` |
-| CA-07 Formulario de transferencia | `transferencia-form.component.ts/.html`, `transferencia.service.ts`, `transferencia.validators.ts` |
-| CA-08 Arquitectura en capas | Estructura de paquetes y `ArquitecturaTest`; en el frontend `core` / `shared` / `features` |
-| CA-09 Buenas prácticas | DTOs, MapStruct, ExceptionMappers centralizados, inyección por constructor; en el frontend interceptor de errores, modelos tipados y ESLint |
-| CA-10 Documentación | Swagger UI y este README |
+| Criterio                                   | Dónde                                                                                                                                       |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| CA-01 Registro y listado de cuentas        | `CuentaApi`, `CuentaResource`, `CuentaService`, `Cuenta`                                                                                    |
+| CA-02 Transferencias con validaciones      | `TransferenciaApi`, `TransferenciaResource`, `TransferenciaService`, `Transferencia`                                                        |
+| CA-03 Detección de operaciones sospechosas | `DeteccionSospechosaService`                                                                                                                |
+| CA-04 Límite diario                        | `LimiteDiarioService`                                                                                                                       |
+| CA-05 Historial y resumen                  | `GET /api/transferencias`, `ResumenCuentaService`                                                                                           |
+| CA-06 Dashboard de cuentas                 | `cuentas.component.ts/.html`, `cuenta.service.ts`                                                                                           |
+| CA-07 Formulario de transferencia          | `transferencia-form.component.ts/.html`, `transferencia.service.ts`, `transferencia.validators.ts`                                          |
+| CA-08 Arquitectura en capas                | Estructura de paquetes y `ArquitecturaTest`; en el frontend `core` / `shared` / `features`                                                  |
+| CA-09 Buenas prácticas                     | DTOs, MapStruct, ExceptionMappers centralizados, inyección por constructor; en el frontend interceptor de errores, modelos tipados y ESLint |
+| CA-10 Documentación                        | Swagger UI y este README                                                                                                                    |
 
 Extras implementados: Docker Compose (MySQL, backend y frontend), pruebas unitarias,
 pruebas de integración, paginación, DTOs con MapStruct, logs estructurados y CORS.
-
-## Fuera del alcance
-
-No se implementaron, pero serían necesarios en un entorno productivo:
-
-- Autenticación y autorización de los endpoints.
-- Idempotencia de transferencias (cabecera `Idempotency-Key`) para evitar duplicados por reintentos.
-- Flujo de aprobación o rechazo de las transferencias en revisión.
-- Restricción de Swagger UI en producción.
-- Paginación y ordenamiento en el servidor para `GET /api/cuentas` (por ejemplo `?orden=saldo,desc`)
-  si el número de cuentas crece; hoy el frontend carga todas las cuentas y ordena en el cliente.
-- Búsqueda dentro de los selectores de cuentas del formulario.
-- Política `Content-Security-Policy` en nginx.
-- Generación del `X-Request-Id` cuando el frontend se sirve sin HTTPS desde un host distinto de
-  `localhost` (`crypto.randomUUID()` requiere un contexto seguro).
